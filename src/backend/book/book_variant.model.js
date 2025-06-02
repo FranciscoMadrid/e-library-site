@@ -1,7 +1,7 @@
 import DB_Query from "../database_query.js"
 
-const table = 'book_variant';
-const primaryKey = 'book_variant_id'
+const table = 'variant';
+const primaryKey = 'variant_id'
 
 export const getAll = async () => {
     const sql = `SELECT * FROM ${table}`
@@ -14,9 +14,9 @@ export const getById = async (id) => {
     .then(rows => rows[0])
 }
 
-export const create = async ({fk_variant_id, fk_book_id, price}) =>{
-    const sql = 'INSERT INTO book_variant (fk_variant_id, fk_book_id, price) VALUES (?, ?, ?)';
-    const result = await DB_Query.query(sql, [fk_variant_id, fk_book_id, price]);
+export const create = async ({variant_name}) =>{
+    const sql = 'INSERT INTO variant (variant_name) VALUES (?)';
+    const result = await DB_Query.query(sql, [variant_name]);
 
     return { message: 'Record has been successfully created.'};
 }

@@ -4,18 +4,59 @@ import * as BookPublisher from './book_publisher.model.js';
 import * as BookCategory from './book_category.models.js';
 import * as BookAuthor from './book_author.model.js';
 import * as BookVariant from './book_variant.model.js';
+import _ from 'lodash';
+import { title } from 'motion/react-client';
 
 //Main Book Controller
 
-export const getAll = async(req, res) => {
+export const getAll = async (req, res) => {
     try {
         const record = await Book.getAll();
-        res.json(record)
+
+        const nestedJson = _(record)
+        .groupBy('book_id')
+        .map((items) => {
+            const first = items[0];
+            return {
+            book_id: first.book_id,
+            title: first.title,
+            publication_date: first.publication_date,
+            categories: _.uniqBy(
+                items.map(i => ({ 
+                    category_name: i.category 
+                })), 
+                'category_name'
+            ),
+            publishers: _.uniqBy(
+                items.map(i => ({
+                    publisher_name: i.publisher_name
+                })), 'publisher_name'
+            ),
+            authors: _.uniqBy(
+                items.map(i => ({
+                    author: i.author
+                })), 'author'
+            ),
+            book_variant: _.uniqBy(
+                items.map(i => ({
+                    variant: i.variant_name,
+                    price: i.price,
+                    images: _.uniqBy(
+                        items.map(it => ({
+                            image_path: it.image_path,
+                            alt_text: it.alt_text
+                        })),'image_path')
+                })), 'variant'
+            )
+            };
+        })
+        .value();
+
+        res.json(nestedJson);
     } catch (error) {
         res.status(500).json({ error: error.message });
     }
-}
-
+};
 export const getById = async(req, res) => {
     try {
         const user = await Book.getById(req.params.id);

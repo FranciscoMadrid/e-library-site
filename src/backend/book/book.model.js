@@ -4,7 +4,12 @@ const table = 'book';
 const primaryKey = 'book_id'
 
 export const getAll = async () => {
-    const sql = `SELECT * FROM ${table}`
+    const sql = `SELECT * FROM book as b INNER JOIN book_category as bc ON b.book_id = bc.fk_book_id 
+        INNER JOIN category as c on bc.fk_category_id = c.category_id 
+        INNER JOIN book_publisher as bp ON bp.fk_book_id = b.book_id INNER JOIN publisher as p ON bp.fk_publisher_id = p.publisher_id 
+        INNER JOIN book_variant as bv ON bv.fk_book_id = book_id INNER JOIN variant as v ON v.variant_id = bv.fk_variant_id 
+        INNER JOIN book_image_variant as biv ON biv.fk_book_variant_id = bv.book_variant_id 
+        INNER JOIN book_image as bi ON bi.book_image_id = biv.fk_book_image_id`
     return await DB_Query.query(sql);
 }
 
@@ -14,23 +19,51 @@ export const getById = async (id) => {
     .then(rows => rows[0])
 }
 
-export const create = async (fields) =>{
-    const keys = Object.keys(fields);
-    const values = Object.values(fields);
+export const create = async ({ title, publication_date, publisher = [], author = [], category = [], variant = [], image = [] }) => {
+    const sqlBook = 'INSERT INTO book (title, publication_date) VALUES (?, ?)';
+    const resBook = await DB_Query.query(sqlBook, [title, publication_date]);
 
-    if (keys.length === 0) {
-        throw new Error('No fields provided to create');
+    const sqlBookPublisher = 'INSERT INTO book_publisher (fk_book_id, fk_publisher_id) VALUES (?, ?)';
+    const sqlBookAuthor = 'INSERT INTO book_author (fk_book_id, fk_author_id) VALUES (?, ?)';
+    const sqlBookCategory = 'INSERT INTO book_category (fk_book_id, fk_category_id) VALUES (?, ?)';
+    const sqlBookVariant = 'INSERT INTO book_variant (fk_book_id, fk_variant_id, price) VALUES (?, ?, ?)';
+    const sqlBookImage = 'INSERT INTO book_image (image_path, alt_text) VALUES (?, ?)';
+    const sqlBookImageVariant = 'INSERT INTO book_image_variant (fk_book_variant_id, fk_book_image_id) VALUES (?, ?)';
+
+    for (const record of publisher) {
+        await DB_Query.query(sqlBookPublisher, [resBook.insertId, record]);
     }
 
-    const columns = keys.join(', ');
-    const placeholders = keys.map(() => '?').join(', ');
+    for (const record of author) {
+        await DB_Query.query(sqlBookAuthor, [resBook.insertId, record]);
+    }
 
-    const sql = `INSERT INTO ${table} (${columns}) VALUES (${placeholders})`;
+    for (const record of category) {
+        await DB_Query.query(sqlBookCategory, [resBook.insertId, record]);
+    }
 
-    const result = await DB_Query.query(sql, values);
+    const bookVariantIds = [];
+    for(const record of variant){
+        const varRes = await DB_Query.query(sqlBookVariant, [resBook.insertId, record.fk_variant_id, record.price])
+        bookVariantIds.push({
+            book_variant_id: varRes.insertId,
+            fk_variant_id: record.fk_variant_id
+        })
+    }
 
-    return { message: 'Record has been successfully created.', id: result.insertId };
-}
+    for (const img of image) {
+        const { fk_variant_id, image_path, alt_text } = img;
+        const matchingVariant = bookVariantIds.find(v => v.fk_variant_id == fk_variant_id);
+        if (!matchingVariant) continue;
+
+        const imageRes = await DB_Query.query(sqlBookImage, [image_path, alt_text]);
+        await DB_Query.query(sqlBookImageVariant, [
+            matchingVariant.book_variant_id,
+            imageRes.insertId
+        ]);
+    } 
+    return { message: 'Record has been successfully created.' };
+};
 
 export const update = async(id, updatedFields) => {
     const fields = [];

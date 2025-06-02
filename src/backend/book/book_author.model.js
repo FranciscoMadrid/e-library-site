@@ -14,12 +14,10 @@ export const getById = async (id) => {
     .then(rows => rows[0])
 }
 
-export const create = async ({book_id, author}) =>{
+export const create = async ({author}) =>{
     const sqlAuthor = 'INSERT INTO author (author) VALUES (?)'
     const resultAuthor = await DB_Query.query(sqlAuthor, [author]);
 
-    const sqlBookAuthor = 'INSERT INTO book_author (fk_book_id, fk_author_id) VALUES (?, ?)'
-    const resultBookAuthor = await DB_Query.query(sqlBookAuthor, [book_id, resultAuthor.insertId])
     return { message: 'Record has been successfully created.'};
 }
 

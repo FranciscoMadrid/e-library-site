@@ -1,14 +1,13 @@
-import * as User from '../user/user.model'
+import * as User from '../user/user.model.js'
+import * as AuthUserSession from './authentication.model.js';
 import bcrypt from 'bcrypt'
 import jwt from 'jsonwebtoken';
 
 export const login = async(req, res) => {
     const {email, password} = req.body;
     const ipAddress = getIp(req);
-    const userAgent = req.headers['user-agent'];
-
     try {
-        const user = await User.getByEmial(email);
+        const user = await User.getByEmail(email);
         
         if(!user)
         {
@@ -20,6 +19,10 @@ export const login = async(req, res) => {
         if(!isValidPassword)
         {
             return res.status(401).json({message: 'Invalid email or password'})
+        }
+
+        if (!process.env.ACCESS_TOKEN_SECRET || !process.env.REFRESH_TOKEN_SECRET) {
+            return res.status(500).json({ message: 'JWT secrets not configured' });
         }
 
         const userPayload = 
@@ -34,10 +37,9 @@ export const login = async(req, res) => {
 
         const refreshTokenExpiresIn = new Date(Date.now() + (7 * 24 * 60 * 60 * 1000));
 
-        const result = await UserSession.createUserSession({
+        const result = await AuthUserSession.create({
             fk_user_id: user.user_id,
             session_token: hashedRefreshToken,
-            user_agent: userAgent,
             ip_address: ipAddress,
             expires_at: refreshTokenExpiresIn,
         })
@@ -49,9 +51,17 @@ export const login = async(req, res) => {
             maxAge: 7 * 24 * 60 * 60 * 1000,
         })
 
-        return res.json({accessToken});
+        return res.json({message: 'Logging Successful',
+            accessToken,
+            user:{
+                id: user.user_id,
+                email: user.email,
+                first_name: user.first_name,
+                last_name: user.last_name
+            }
+        });
     } catch (error) {
-        return res.status(500).json({ message: 'Internal server error' }); 
+        return res.status(500).json({ message: `Internal server error ${error}` }); 
     }
 }
 

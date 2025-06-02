@@ -1,5 +1,5 @@
 import * as Order from './order.model.js';
-import * as Order from './order_item.model.js';
+import * as OrderItem from './order_item.model.js';
 
 //Main Order Controller
 
@@ -74,7 +74,7 @@ export const deleteById = async(req, res) => {
 
 export const getAllOrderItem = async(req, res) => {
     try {
-        const record = await Order.getAll();
+        const record = await OrderItem.getAll();
         res.json(record)
     } catch (error) {
         res.status(500).json({ error: error.message });
@@ -83,7 +83,7 @@ export const getAllOrderItem = async(req, res) => {
 
 export const getByIdOrderItem = async(req, res) => {
     try {
-        const user = await Order.getById(req.params.id);
+        const user = await OrderItem.getById(req.params.id);
 
         if(!user)
         {
@@ -98,7 +98,7 @@ export const getByIdOrderItem = async(req, res) => {
 
 export const createOrderItem = async (req, res) => {
     try {
-        const user = await Order.create(req.body);
+        const user = await OrderItem.create(req.body);
         res.status(201).json(user);
     } catch (error) {
             res.status(500).json({ error: error.message });
@@ -110,7 +110,7 @@ export const updateOrderItem = async(req, res) => {
     const updateData = req.body;
 
     try {
-        const affectedRows = await Order.update(userId, updateData);
+        const affectedRows = await OrderItem.update(userId, updateData);
 
         if(affectedRows === 0)
         {
@@ -127,7 +127,7 @@ export const deleteByIdOrderItem = async(req, res) => {
     const userId = req.params.id;
 
     try {
-        const affectedRows = await Order.deleteById(userId);
+        const affectedRows = await OrderItem.deleteById(userId);
 
         if(affectedRows === 0)
         {

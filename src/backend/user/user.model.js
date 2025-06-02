@@ -1,7 +1,9 @@
 import DB_Query from "../database_query.js"
+import bcrypt from 'bcrypt'
 
 const table = 'user';
 const primaryKey = 'user_id'
+const SALT_ROUNDS = 10;
 
 export const getAll = async () => {
     const sql = `SELECT * FROM ${table}`
@@ -14,28 +16,21 @@ export const getById = async (id) => {
     .then(rows => rows[0])
 }
 
-export const getByEmial = async(email) => {
+export const getByEmail = async(email) => {
     const sql = 'SELECT * FROM user WHERE email = ?';
-    const result = await DB_Query.query(sql, [email])
-    return result
+    return await DB_Query.query(sql, [email])
+    .then(rows => rows[0])
 }
 
-export const create = async (fields) =>{
-    const keys = Object.keys(fields);
-    const values = Object.values(fields);
+export const create = async ({email, first_name, last_name, password}) =>{
+    const hashedPassword = await bcrypt.hash(password, SALT_ROUNDS);
 
-    if (keys.length === 0) {
-        throw new Error('No fields provided to create');
-    }
+    const result = await DB_Query.query(
+        'INSERT INTO user (email, first_name, last_name, password_hash) VALUES (?, ?, ?, ?)',
+        [email, first_name, last_name, hashedPassword]
+    );
 
-    const columns = keys.join(', ');
-    const placeholders = keys.map(() => '?').join(', ');
-
-    const sql = `INSERT INTO ${table} (${columns}) VALUES (${placeholders})`;
-
-    const result = await DB_Query.query(sql, values);
-
-    return { message: 'Record has been successfully created.', id: result.insertId };
+    return {message: 'User has been successfully created',details: `Email: ${email}`}
 }
 
 export const update = async(id, updatedFields) => {

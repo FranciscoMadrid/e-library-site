@@ -14,12 +14,9 @@ export const getById = async (id) => {
     .then(rows => rows[0])
 }
 
-export const create = async ({book_id, category}) =>{
+export const create = async ({category}) =>{
     const sqlCategory = 'INSERT INTO category (category) VALUES (?)';
     const resultCategory = await DB_Query.query(sqlCategory, [category]);
-
-    const sqlBookCategory = 'INSERT INTO book_category (fk_book_id, fk_category_id) VALUES (?, ?)';
-    const resultBookCategory = await DB_Query.query(sqlBookCategory, [book_id, resultCategory.insertId]);
 
     return { message: 'Record has been successfully created.'};
 }
