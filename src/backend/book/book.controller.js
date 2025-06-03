@@ -39,6 +39,7 @@ export const getAll = async (req, res) => {
             ),
             book_variant: _.uniqBy(
                 items.map(i => ({
+                    variant_id: i.variant_id,
                     variant: i.variant_name,
                     price: i.price,
                     images: _.uniqBy(

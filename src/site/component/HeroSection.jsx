@@ -12,13 +12,15 @@ return (
     <section className={`w-full mx-auto relative ${height}`}>
         <div className='grid grid-cols-2 items-center h-full w-full'>
             <div className='flex flex-col gap-2 items-start p-6 overflow-hidden'>
-                <h1 className="text-accent-primary text-lg md:text-xl">{flavor_title}</h1>
+                <div className='flex flex-col gap-2 items-start p-6 max-w-7xl mx-auto'>
+                    <h1 className="text-accent-primary text-lg md:text-xl">{flavor_title}</h1>
 
-                <h1   h1 className="font-bold text-3xl md:text-7xl text-accent-secondary">{title}</h1>
-                
-                <button className="bg-accent-primary mt-6 text-sm text-white hover:bg-accent-primary/50 cursor-pointer transition ease-in-out duration-200  font-bold p-2 rounded-xl">
-                    {button_text}
-                </button>
+                    <h1 className="font-bold text-3xl md:text-7xl text-accent-secondary">{title}</h1>
+                    
+                    <button className="bg-accent-primary mt-6 text-sm text-white hover:bg-accent-primary/50 cursor-pointer transition ease-in-out duration-200  font-bold p-2 rounded-xl">
+                        {button_text}
+                    </button>
+                </div>
             </div>
 
             <div className='relative h-full w-full overflow-hidden'>
