@@ -8,3 +8,33 @@
     --color-accent-black: #212121;
     --color-accent-aux: #3B4C5A;
 }
+
+.banner-container {
+  width: 100%;
+  height: 6rem; /* same as h-24 */
+  overflow: hidden;
+  position: relative;
+}
+
+.scrolling-pattern {
+  display: flex;
+  width: 200%; /* two images side by side */
+  height: 100%;
+  animation: scrollLeft 20s linear infinite;
+}
+
+.pattern-img {
+  width: 50%;
+  height: 100%;
+  object-fit: contain;
+  flex-shrink: 0;
+}
+
+@keyframes scrollLeft {
+  0% {
+    transform: translateX(0);
+  }
+  100% {
+    transform: translateX(-50%);
+  }
+}

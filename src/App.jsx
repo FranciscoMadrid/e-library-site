@@ -5,6 +5,8 @@ import { loginSuccess } from './redux/authSlice'; // adjust path if needed
 
 import Home from './site/page/Home';
 import Login from './site/page/Login';
+import Store from './site/page/Store';
+import SingleBook from './site/page/SingleBook';
 import Helper from './site/page/Helper';
 import Footer from './site/component/Footer';
 import Navbar from './site/component/Navbar';
@@ -27,9 +29,11 @@ function App() {
         <Navbar />
         <main className='flex-grow'>
           <Routes>
-            <Route path='/' element={<Home />} />
-            <Route path='/login' element={<Login />} />
-            <Route path='/helper' element={<Helper />} />
+            <Route path='/' element={<Home/>} />
+            <Route path='/login' element={<Login/>} />
+            <Route path='/helper' element={<Helper/>} />
+            <Route path='/store' element={<Store/>} />
+            <Route path='/store/:id' element={<SingleBook/>} />
           </Routes>
         </main>
         <Footer />

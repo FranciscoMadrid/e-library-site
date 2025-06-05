@@ -3,18 +3,81 @@ import DB_Query from "../database_query.js"
 const table = 'book';
 const primaryKey = 'book_id'
 
-export const getAll = async () => {
-    const sql = `SELECT * FROM book as b INNER JOIN book_category as bc ON b.book_id = bc.fk_book_id INNER JOIN category as c on bc.fk_category_id = c.category_id 
-        INNER JOIN book_publisher as bp ON bp.fk_book_id = b.book_id 
-        INNER JOIN publisher as p ON bp.fk_publisher_id = p.publisher_id 
-        INNER JOIN book_variant as bv ON bv.fk_book_id = book_id 
-        INNER JOIN variant as v ON v.variant_id = bv.fk_variant_id 
-        INNER JOIN book_image_variant as biv ON biv.fk_book_variant_id = bv.book_variant_id 
-        INNER JOIN book_image as bi ON bi.book_image_id = biv.fk_book_image_id 
-        INNER JOIN book_author as ba ON b.book_id = ba.fk_book_id 
-        INNER JOIN author as a ON ba.fk_author_id = a.author_id`
-    return await DB_Query.query(sql);
-}
+export const getAll = async ({ limit = 10, page = 1, searchTerm = '', orderDesc = false }) => {
+    orderDesc = orderDesc === true || orderDesc === 'true';
+    const orderBy = orderDesc ? 'DESC' : 'ASC';
+
+    const offset = (page - 1) * limit;
+    const bookParams = [];
+    let whereAdded = false;
+
+    let bookSql = `SELECT DISTINCT b.book_id FROM book AS b
+        INNER JOIN book_category AS bc ON b.book_id = bc.fk_book_id
+        INNER JOIN category AS c ON bc.fk_category_id = c.category_id
+        INNER JOIN book_author AS ba ON ba.fk_book_id = b.book_id
+        INNER JOIN author AS a ON a.author_id = ba.fk_author_id
+        INNER JOIN book_publisher AS bp ON bp.fk_book_id = b.book_id
+        INNER JOIN publisher AS p ON bp.fk_publisher_id = p.publisher_id`;
+
+    if (searchTerm) {
+        bookSql += ' WHERE (b.title LIKE ? OR p.publisher_name LIKE ? OR c.category LIKE ? OR a.author LIKE ?)';
+        const likeTerm = `%${searchTerm}%`;
+        bookParams.push(likeTerm, likeTerm, likeTerm, likeTerm);
+        whereAdded = true;
+    }
+
+    bookSql += ` GROUP BY b.book_id ORDER BY b.book_id ${orderBy} LIMIT ? OFFSET ?`;
+    bookParams.push(limit, offset);
+
+    const resBooks = await DB_Query.query(bookSql, bookParams);
+    const bookIds = resBooks.map(book => book.book_id);
+
+    if (bookIds.length === 0) {
+        return [];
+    }
+
+    const placeholders = bookIds.map(() => '?').join(',');
+
+    const sqlBookDetails = `
+        SELECT * FROM book as b
+        INNER JOIN book_category as bc ON b.book_id = bc.fk_book_id
+        INNER JOIN category as c on bc.fk_category_id = c.category_id
+        INNER JOIN book_author as ba ON ba.fk_book_id = b.book_id
+        INNER JOIN author as a ON a.author_id = ba.fk_author_id
+        INNER JOIN book_publisher as bp ON bp.fk_book_id = b.book_id
+        INNER JOIN publisher as p ON bp.fk_publisher_id = p.publisher_id
+        INNER JOIN book_variant as bv ON bv.fk_book_id = b.book_id
+        INNER JOIN variant as v ON v.variant_id = bv.fk_variant_id
+        INNER JOIN book_image_variant as biv ON biv.fk_book_variant_id = bv.book_variant_id
+        INNER JOIN book_image as bi ON bi.book_image_id = biv.fk_book_image_id
+        WHERE b.book_id IN (${placeholders})
+        ORDER BY b.book_id ${orderBy}
+    `;
+
+    const paramsBookDetails = [...bookIds];
+
+    return await DB_Query.query(sqlBookDetails, paramsBookDetails);
+};
+
+export const countBooks = async ({ searchTerm = '' }) => {
+    const params = [];
+    let sql = `SELECT COUNT(DISTINCT b.book_id) as total FROM book AS b
+        INNER JOIN book_category AS bc ON b.book_id = bc.fk_book_id
+        INNER JOIN category AS c ON bc.fk_category_id = c.category_id
+        INNER JOIN book_author AS ba ON ba.fk_book_id = b.book_id
+        INNER JOIN author AS a ON a.author_id = ba.fk_author_id
+        INNER JOIN book_publisher AS bp ON bp.fk_book_id = b.book_id
+        INNER JOIN publisher AS p ON bp.fk_publisher_id = p.publisher_id`;
+
+    if (searchTerm) {
+        sql += ` WHERE (b.title LIKE ? OR p.publisher_name LIKE ? OR c.category LIKE ? OR a.author LIKE ?)`;
+        const likeTerm = `%${searchTerm}%`;
+        params.push(likeTerm, likeTerm, likeTerm, likeTerm);
+    }
+
+    const result = await DB_Query.query(sql, params);
+    return result[0].total;
+};
 
 export const getById = async (id) => {
     const sql = `SELECT * FROM ${table} WHERE ${primaryKey} = ?`

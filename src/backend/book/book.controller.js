@@ -11,53 +11,59 @@ import { title } from 'motion/react-client';
 
 export const getAll = async (req, res) => {
     try {
-        const record = await Book.getAll();
+        const limit = parseInt(req.query.limit) || 10;
+        const page = parseInt(req.query.page) || 1;
+        const searchTerm = req.query.searchTerm || '';
+        const orderDesc = req.query.orderDesc || false;
+
+        const record = await Book.getAll({ limit, page, searchTerm, orderDesc });
 
         const nestedJson = _(record)
-        .groupBy('book_id')
-        .map((items) => {
-            const first = items[0];
-            return {
-            book_id: first.book_id,
-            title: first.title,
-            publication_date: first.publication_date,
-            categories: _.uniqBy(
-                items.map(i => ({ 
-                    category_name: i.category 
-                })), 
-                'category_name'
-            ),
-            publishers: _.uniqBy(
-                items.map(i => ({
-                    publisher_name: i.publisher_name
-                })), 'publisher_name'
-            ),
-            authors: _.uniqBy(
-                items.map(i => ({
-                    author: i.author
-                })), 'author'
-            ),
-            book_variant: _.uniqBy(
-                items.map(i => ({
+            .groupBy('book_id')
+            .map((items) => {
+                const first = items[0];
+                return {
+                book_id: first.book_id,
+                title: first.title,
+                publication_date: first.publication_date,
+                categories: _.uniqBy(
+                    items.map(i => ({ category_name: i.category })),
+                    'category_name'
+                ),
+                publishers: _.uniqBy(
+                    items.map(i => ({ publisher_name: i.publisher_name })),
+                    'publisher_name'
+                ),
+                authors: _.uniqBy(
+                    items.map(i => ({ author: i.author })),
+                    'author'
+                ),
+                book_variant: _.uniqBy(
+                    items.map(i => ({
                     variant_id: i.variant_id,
                     variant: i.variant_name,
                     price: i.price,
                     images: _.uniqBy(
                         items.map(it => ({
-                            image_path: it.image_path,
-                            alt_text: it.alt_text
-                        })),'image_path')
-                })), 'variant'
-            )
-            };
-        })
-        .value();
-
-        res.json(nestedJson);
+                        image_path: it.image_path,
+                        alt_text: it.alt_text
+                        })), 'image_path')
+                    })), 'variant'
+                )
+                };
+            })
+            .value();
+            res.json({
+            data: nestedJson,
+            currentPage: page,
+            pageSize: limit,
+            });
+        const resTotalBooks = await Book.countBooks(searchTerm);
     } catch (error) {
         res.status(500).json({ error: error.message });
     }
 };
+
 export const getById = async(req, res) => {
     try {
         const user = await Book.getById(req.params.id);

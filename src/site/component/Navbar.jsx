@@ -51,10 +51,10 @@ return (
             {/* Desktop View */}
             <div className='md:flex hidden flex-row gap-2 items-center font-light'>
                 <div className='flex flex-row gap-4 justify-between items-center text-accent-secondary font-light'>
-                    <a href='#' className='flex flex-row gap-1 justify-between items-center p-2 transition ease-in-out duration-200 rounded hover:text-accent-primary'>
+                    <Link to={'/store'} className='flex flex-row gap-1 justify-between items-center p-2 transition ease-in-out duration-200 rounded hover:text-accent-primary'>
                         <i className="fa-solid fa-store fa-lg"></i>
                         <h1>Store</h1>
-                    </a>
+                    </Link>
 
                     <a href='#' className='flex flex-row gap-1 justify-between items-center p-2 transition ease-in-out duration-200 rounded hover:text-accent-primary'>
                         <i className="fa fa-address-book fa-lg"></i>
@@ -109,10 +109,10 @@ return (
 
                         className='absolute top-full left-0 w-full border-b-4 border-secondary text-white flex z-10 flex-col items-center text-accent-white text-xl font-semibold gap-4 py-4 bg-secondary/70 md:hidden'>
                         
-                        <a href='#' className='flex flex-row gap-1 justify-between items-center p-2 transition ease-in-out duration-200 rounded hover:bg-white hover:text-accent-black'>
+                        <Link to={'/store'} className='flex flex-row gap-1 justify-between items-center p-2 transition ease-in-out duration-200 rounded hover:bg-white hover:text-accent-black'>
                             <i className="fa-solid fa-store fa-lg"></i>
                             <h1>Store</h1>
-                        </a>
+                        </Link>
 
                         <a href='#' className='flex flex-row gap-1 justify-between items-center p-2 transition ease-in-out duration-200 rounded hover:bg-white hover:text-accent-black'>
                             <i className="fa fa-address-book fa-lg"></i>

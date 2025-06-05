@@ -13,8 +13,12 @@ export default function Home() {
     useEffect(() => {
         const fetchData = async () => {
         try {
-            const [bookData] = await Promise.all([BookApi.getAll()])
-            setBooks(bookData)
+            const [bookData] = await Promise.all(
+                [BookApi.getAll(8, null, null, true)]
+            );
+            
+            bookData.data.sort((a, b) => b.book_id - a.book_id);
+            setBooks(bookData.data);
         } catch (error) {
             console.error(error)
             setError('Failed to load data')
