@@ -16,13 +16,15 @@ export const getAll = async ({ limit = 10, page = 1, searchTerm = '', orderDesc 
         INNER JOIN category AS c ON bc.fk_category_id = c.category_id
         INNER JOIN book_author AS ba ON ba.fk_book_id = b.book_id
         INNER JOIN author AS a ON a.author_id = ba.fk_author_id
+        INNER JOIN book_variant as bv ON bv.fk_book_id = b.book_id
+        INNER JOIN variant as v ON v.variant_id = bv.fk_variant_id
         INNER JOIN book_publisher AS bp ON bp.fk_book_id = b.book_id
         INNER JOIN publisher AS p ON bp.fk_publisher_id = p.publisher_id`;
 
     if (searchTerm) {
-        bookSql += ' WHERE (b.title LIKE ? OR p.publisher_name LIKE ? OR c.category LIKE ? OR a.author LIKE ?)';
+        bookSql += ' WHERE (b.title LIKE ? OR v.variant_name LIKE ? OR p.publisher_name LIKE ? OR c.category LIKE ? OR a.author LIKE ?)';
         const likeTerm = `%${searchTerm}%`;
-        bookParams.push(likeTerm, likeTerm, likeTerm, likeTerm);
+        bookParams.push(likeTerm, likeTerm, likeTerm, likeTerm, likeTerm);
         whereAdded = true;
     }
 
@@ -63,6 +65,8 @@ export const countBooks = async ({ searchTerm = '' }) => {
     const params = [];
     let sql = `SELECT COUNT(DISTINCT b.book_id) as total FROM book AS b
         INNER JOIN book_category AS bc ON b.book_id = bc.fk_book_id
+        INNER JOIN book_variant AS bv ON bv.fk_book_id = b.book_id
+        INNER JOIN variant AS v ON v.variant_id = bv.fk_variant_id
         INNER JOIN category AS c ON bc.fk_category_id = c.category_id
         INNER JOIN book_author AS ba ON ba.fk_book_id = b.book_id
         INNER JOIN author AS a ON a.author_id = ba.fk_author_id
@@ -70,9 +74,9 @@ export const countBooks = async ({ searchTerm = '' }) => {
         INNER JOIN publisher AS p ON bp.fk_publisher_id = p.publisher_id`;
 
     if (searchTerm) {
-        sql += ` WHERE (b.title LIKE ? OR p.publisher_name LIKE ? OR c.category LIKE ? OR a.author LIKE ?)`;
+        sql += ` WHERE (b.title LIKE ? OR v.variant_name LIKE ? OR p.publisher_name LIKE ? OR c.category LIKE ? OR a.author LIKE ?)`;
         const likeTerm = `%${searchTerm}%`;
-        params.push(likeTerm, likeTerm, likeTerm, likeTerm);
+        params.push(likeTerm, likeTerm, likeTerm, likeTerm, likeTerm);
     }
 
     const result = await DB_Query.query(sql, params);

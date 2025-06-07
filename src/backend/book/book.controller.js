@@ -17,6 +17,8 @@ export const getAll = async (req, res) => {
         const orderDesc = req.query.orderDesc || false;
 
         const record = await Book.getAll({ limit, page, searchTerm, orderDesc });
+        const resTotalBooks = await Book.countBooks({searchTerm});
+        const totalPages = Math.ceil(resTotalBooks/limit);
 
         const nestedJson = _(record)
             .groupBy('book_id')
@@ -53,12 +55,13 @@ export const getAll = async (req, res) => {
                 };
             })
             .value();
-            res.json({
+
+        return res.status(200).json({
             data: nestedJson,
             currentPage: page,
             pageSize: limit,
-            });
-        const resTotalBooks = await Book.countBooks(searchTerm);
+            totalPages: totalPages
+        });
     } catch (error) {
         res.status(500).json({ error: error.message });
     }

@@ -8,7 +8,7 @@ import 'swiper/css/pagination';
 import { Navigation, Pagination, Mousewheel, Keyboard } from 'swiper/modules';
 import { Link } from 'react-router-dom';
 
-export default function BookCard({ data, showPrice = false }) {
+export default function BookCard({ data, showPrice = false, backgroundClr = '' }) {
     const { title, authors, categories, book_variant, book_id } = data;
     const firstVariant = Array.isArray(book_variant) && book_variant.length > 0
         ? book_variant[0]
@@ -18,10 +18,7 @@ export default function BookCard({ data, showPrice = false }) {
 
     return (
         <div className="w-full max-w-xs mx-auto p-2 relative overflow-hidden"> 
-            <Link to={{pathname: `/store/${book_id}`}} className="flex flex-col gap-2 items-center">
-                <h1 className="font-bold text-center truncate w-[16vw] text-accent-secondary text-shadow">{title}</h1>
-                <h1 className="font-light">{authors.map((auth) => auth.author).join(', ')}</h1>
-
+            <Link to={{pathname: `/store/${book_id}`}} className={`flex flex-col p-2 ${backgroundClr} rounded-2xl gap-2 items-center`}>
                 {firstVariantImages.length === 1 ? (
                     <section className="w-full h-64 md:h-72">
                         <img
@@ -54,12 +51,18 @@ export default function BookCard({ data, showPrice = false }) {
                         ))}
                     </Swiper>
                 )}
+            </Link>
+            <div className='flex flex-col gap-2 py-2 border-b-2'>
+                <div className='flex flex-col gap-2'>
+                    <h1 className="font-bold truncate w-full text-accent-secondary text-shadow">{title}</h1>
+                    <h1 className="font-light">{authors.map((auth) => auth.author).join(', ')}</h1>
+                </div>
                 {showPrice ? (
                     <h1 className='font-light'><strong className='font-semibold'>Cost: </strong> ${firstVariant.price}</h1>
                 ) : (
                     ''
                 )}
-            </Link>
+            </div>
         </div>
     );
 }
