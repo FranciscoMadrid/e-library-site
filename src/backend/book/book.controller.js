@@ -69,16 +69,97 @@ export const getAll = async (req, res) => {
 
 export const getById = async(req, res) => {
     try {
-        const user = await Book.getById(req.params.id);
+        const record = await Book.getById(req.params.id);
+        const nestedJson = _(record)
+            .groupBy('book_id')
+            .map((items) => {
+                const first = items[0];
+                return {
+                book_id: first.book_id,
+                title: first.title,
+                publication_date: first.publication_date,
+                categories: _.uniqBy(
+                    items.map(i => ({ category_name: i.category })),
+                    'category_name'
+                ),
+                publishers: _.uniqBy(
+                    items.map(i => ({ publisher_name: i.publisher_name })),
+                    'publisher_name'
+                ),
+                authors: _.uniqBy(
+                    items.map(i => ({ author: i.author })),
+                    'author'
+                ),
+                book_variant: _.uniqBy(
+                    items.map(i => ({
+                    book_variant_id: i.book_variant_id,
+                    variant_id: i.variant_id,
+                    variant: i.variant_name,
+                    price: i.price,
+                    images: _.uniqBy(
+                        items.map(it => ({
+                        image_path: it.image_path,
+                        alt_text: it.alt_text
+                        })), 'image_path')
+                    })), 'variant'
+                )
+                };
+            })
+            .value();
 
-        if(!user)
-        {
-            return res.status(404).json({ error: 'Record not found'})
-        }
-
-        res.json(user); 
+        return res.status(200).json({
+            data: nestedJson
+        });
     } catch (error) {
-        res.status(500).json({ error: err.message });
+        res.status(500).json({ error: error.message });
+    }
+}
+
+export const getByBookVariantID = async(req, res) => {
+    try {
+        const record = await Book.getByBookVariantID(req.params.id);
+        const nestedJson = _(record)
+            .groupBy('book_id')
+            .map((items) => {
+                const first = items[0];
+                return {
+                book_id: first.book_id,
+                title: first.title,
+                publication_date: first.publication_date,
+                categories: _.uniqBy(
+                    items.map(i => ({ category_name: i.category })),
+                    'category_name'
+                ),
+                publishers: _.uniqBy(
+                    items.map(i => ({ publisher_name: i.publisher_name })),
+                    'publisher_name'
+                ),
+                authors: _.uniqBy(
+                    items.map(i => ({ author: i.author })),
+                    'author'
+                ),
+                book_variant: _.uniqBy(
+                    items.map(i => ({
+                    book_variant_id: i.book_variant_id,
+                    variant_id: i.variant_id,
+                    variant: i.variant_name,
+                    price: i.price,
+                    images: _.uniqBy(
+                        items.map(it => ({
+                        image_path: it.image_path,
+                        alt_text: it.alt_text
+                        })), 'image_path')
+                    })), 'variant'
+                )
+                };
+            })
+            .value();
+
+        return res.status(200).json({
+            data: nestedJson
+        });
+    } catch (error) {
+        res.status(500).json({ error: error.message });
     }
 }
 

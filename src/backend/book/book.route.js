@@ -2,6 +2,8 @@ import express from 'express'
 import * as BookControl from './book.controller.js'
 
 const router = express.Router();
+//Book-Variants-----------------------------------------
+router.get('/book-variant/:id', BookControl.getByBookVariantID);
 
 //Book Variant-----------------------------------------
 router.get('/variant', BookControl.getAllVariant);

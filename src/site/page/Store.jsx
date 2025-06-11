@@ -164,7 +164,7 @@ return (
                 </div>
 
                 {/* Books Container */}
-                <div className='grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-5  gap-4 p-2 items-start'>
+                <div className='grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-4 p-2 items-stretch'>
                     {books.map(book => (
                         <div key={book.book_id} className='shadow border-2 border-accent-secondary/50'>
                             <BookCard data={book} showPrice={true} backgroundClr='bg-accent-black/8'/>

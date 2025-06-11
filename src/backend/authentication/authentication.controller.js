@@ -57,7 +57,8 @@ export const login = async(req, res) => {
                 id: user.user_id,
                 email: user.email,
                 first_name: user.first_name,
-                last_name: user.last_name
+                last_name: user.last_name,
+                cart_id: user.cart_id
             }
         });
     } catch (error) {

@@ -9,9 +9,8 @@ export const getAll = async () => {
 }
 
 export const getById = async (id) => {
-    const sql = `SELECT * FROM ${table} WHERE ${primaryKey} = ?`
+    const sql = `SELECT * FROM cart INNER JOIN cart_item ON cart.cart_id = cart_item.fk_cart_id WHERE cart.cart_id = ?`
     return await DB_Query.query(sql, [id])
-    .then(rows => rows[0])
 }
 
 export const create = async (fields) =>{

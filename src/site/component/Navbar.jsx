@@ -7,11 +7,16 @@ import { AnimatePresence, easeInOut, motion, useInView } from 'framer-motion';
 import { Link, useNavigate } from 'react-router-dom';
 import { useDispatch, useSelector } from 'react-redux';
 import { logout } from '../../redux/authSlice';
+import { clearCart } from '../../redux/cartSlice';
+import CartContainer from './CartContainer';
 
 export default function Navbar() {
     const { isAuthenticated, user } = useSelector(state => state.auth);
+    
     const [mobileView, setMobileView] = useState(false);
     const [accountView, setaccountView] = useState(false);
+    const [toggleCart, setToggleCart] = useState(false);
+
     const dispatch = useDispatch();
     const navigate = useNavigate();
     
@@ -27,8 +32,8 @@ export default function Navbar() {
         try {
             e.preventDefault();
             await axiosInstance.post('/auth/logout');
-
             dispatch(logout());
+            dispatch(clearCart());
             navigate('/');
         } catch (error) {
             console.error('Logout failed:', error);
@@ -36,7 +41,8 @@ export default function Navbar() {
     };
 
 return (
-    <nav className='w-full relative'>
+    <nav className='w-full'>
+        <CartContainer toggleCart={toggleCart} setToggleCart={setToggleCart}/>
         <div className='flex flex-row gap-2 h-20 relative items-center justify-between p-4 bg-secondary border-b-2 border-accent-secondary'>
             {/* Logo */}
             <div className='flex flex-row gap-2 justify-between'>
@@ -56,10 +62,18 @@ return (
                         <h1>Store</h1>
                     </Link>
 
-                    <a href='#' className='flex flex-row gap-1 justify-between items-center p-2 transition ease-in-out duration-200 rounded hover:text-accent-primary'>
-                        <i className="fa fa-address-book fa-lg"></i>
-                        <h1>Contact</h1>
-                    </a>
+                    {isAuthenticated ? (
+                        <div onClick={() => setToggleCart(!toggleCart)} className='flex cursor-pointer flex-row gap-1 justify-between items-center p-2 transition ease-in-out duration-200 rounded hover:text-accent-primary'>
+                            <i className="fa-solid fa-cart-shopping fa-lg"></i>
+                            <h1>Cart</h1>
+                        </div>
+                    ) : (
+                        <Link to={'/login'}  className='flex cursor-pointer flex-row gap-1 justify-between items-center p-2 transition ease-in-out duration-200 rounded hover:text-accent-primary'>
+                            <i className="fa-solid fa-cart-shopping fa-lg"></i>
+                            <h1>Cart</h1>
+                        </Link>
+                    )}
+
                     {!isAuthenticated ?          
                     (<Link to={'/login'}  className='flex flex-row gap-1 justify-between items-center p-2 transition ease-in-out duration-200 rounded hover:text-accent-primary'>
                         <i className="fa-solid fa-user fa-lg"></i>
@@ -125,7 +139,8 @@ return (
                     </motion.div>
                 )}
             </AnimatePresence>
-
+            
+            {/* User Tab WIP */}
             <AnimatePresence>
                 {accountView && (
                     <motion.div

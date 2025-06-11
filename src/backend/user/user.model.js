@@ -17,7 +17,7 @@ export const getById = async (id) => {
 }
 
 export const getByEmail = async(email) => {
-    const sql = 'SELECT * FROM user WHERE email = ?';
+    const sql = 'SELECT * FROM user INNER JOIN cart ON user.user_id = cart.fk_user_id WHERE user.email = ?';
     return await DB_Query.query(sql, [email])
     .then(rows => rows[0])
 }

@@ -40,8 +40,8 @@ export default function ContainerSwiper({title = 'Default Title',children}) {
                 initialSlide={2}
                 slidesPerView={1}
                 autoplay={{
-                delay: 2500,
-                disableOnInteraction: false,
+                delay: 3500,
+                disableOnInteraction: true,
                 }}
                 onSwiper={handleSwiper}
                 onSlideChange={handleSlideChange}

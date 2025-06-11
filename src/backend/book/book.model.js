@@ -84,9 +84,35 @@ export const countBooks = async ({ searchTerm = '' }) => {
 };
 
 export const getById = async (id) => {
-    const sql = `SELECT * FROM ${table} WHERE ${primaryKey} = ?`
+    const sql = `SELECT * FROM book as b
+        INNER JOIN book_category as bc ON b.book_id = bc.fk_book_id
+        INNER JOIN category as c on bc.fk_category_id = c.category_id
+        INNER JOIN book_author as ba ON ba.fk_book_id = b.book_id
+        INNER JOIN author as a ON a.author_id = ba.fk_author_id
+        INNER JOIN book_publisher as bp ON bp.fk_book_id = b.book_id
+        INNER JOIN publisher as p ON bp.fk_publisher_id = p.publisher_id
+        INNER JOIN book_variant as bv ON bv.fk_book_id = b.book_id
+        INNER JOIN variant as v ON v.variant_id = bv.fk_variant_id
+        INNER JOIN book_image_variant as biv ON biv.fk_book_variant_id = bv.book_variant_id
+        INNER JOIN book_image as bi ON bi.book_image_id = biv.fk_book_image_id
+        WHERE b.book_id = ?`
     return await DB_Query.query(sql, [id])
-    .then(rows => rows[0])
+}
+
+export const getByBookVariantID = async (id) => {
+        const sql = `SELECT * FROM book as b
+        INNER JOIN book_category as bc ON b.book_id = bc.fk_book_id
+        INNER JOIN category as c on bc.fk_category_id = c.category_id
+        INNER JOIN book_author as ba ON ba.fk_book_id = b.book_id
+        INNER JOIN author as a ON a.author_id = ba.fk_author_id
+        INNER JOIN book_publisher as bp ON bp.fk_book_id = b.book_id
+        INNER JOIN publisher as p ON bp.fk_publisher_id = p.publisher_id
+        INNER JOIN book_variant as bv ON bv.fk_book_id = b.book_id
+        INNER JOIN variant as v ON v.variant_id = bv.fk_variant_id
+        INNER JOIN book_image_variant as biv ON biv.fk_book_variant_id = bv.book_variant_id
+        INNER JOIN book_image as bi ON bi.book_image_id = biv.fk_book_image_id
+        WHERE bv.book_variant_id = ?`
+    return await DB_Query.query(sql, [id])
 }
 
 export const create = async ({ title, publication_date, publisher = [], author = [], category = [], variant = [], image = [] }) => {
