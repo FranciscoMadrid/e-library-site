@@ -7,7 +7,9 @@ import Home from './site/page/Home';
 import Login from './site/page/Login';
 import Store from './site/page/Store';
 import SingleBook from './site/page/SingleBook';
+import Checkout from './site/page/Checkout';
 import Helper from './site/page/Helper';
+import Orders from './site/page/Orders';
 import Footer from './site/component/Footer';
 import Navbar from './site/component/Navbar';
 
@@ -25,15 +27,17 @@ function App() {
 
   return (
     <BrowserRouter>
-      <div className='flex flex-col min-h-screen relative'>
+      <div className='flex flex-col min-h-screen relative font-dmserif'>
         <Navbar />
-        <main className='flex-grow'>
+        <main className='flex-grow flex'>
           <Routes>
             <Route path='/' element={<Home/>} />
             <Route path='/login' element={<Login/>} />
             <Route path='/helper' element={<Helper/>} />
             <Route path='/store' element={<Store/>} />
             <Route path='/store/:id' element={<SingleBook/>} />
+            <Route path='/checkout' element={<Checkout/>} />
+            <Route path='/order' element={<Orders/>} />
           </Routes>
         </main>
         <Footer />

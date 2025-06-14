@@ -33,11 +33,16 @@ export default function Helper() {
 
     useEffect(() => {
         setDropzones(prev => {
-            const existingIds = prev.map(dz => dz.id);
+            const currentIds = selectedVariants.map(v => v.value);
+
+            const updated = prev.filter(dz => currentIds.includes(dz.id));
+
+            const existingIds = updated.map(dz => dz.id);
             const newDropzones = selectedVariants
                 .filter(variant => !existingIds.includes(variant.value))
                 .map(variant => ({ id: variant.value, images: [] }));
-            return [...prev, ...newDropzones];
+
+            return [...updated, ...newDropzones];
         });
     }, [selectedVariants]);
 

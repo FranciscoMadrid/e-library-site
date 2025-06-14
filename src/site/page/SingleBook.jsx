@@ -4,6 +4,7 @@ import { useParams } from 'react-router-dom';
 import SingleBookItem from '../component/SingleBookItem.jsx';
 import ContainerSwiper from '../component/ContainerSwiper.jsx';
 import BookCard from '../component/BookCard.jsx';
+import BounceLoader from "react-spinners/BounceLoader";
 
 export default function SingleBook() {
     const [book, setBook] = useState([]);
@@ -19,15 +20,16 @@ export default function SingleBook() {
             try {
                 setLoading(true);
                 setError('');
-
                 const bookResponse = await BookApi.getById(id);
-                const bookItem = bookResponse.data?.[0];
+
+                const bookItem = bookResponse.data;
 
                 if (!bookItem) {
                     throw new Error('Book not found.');
                 }
 
                 setBook(bookItem);
+                console.log(bookItem)
 
                 const categories = bookItem.categories;
                 if (!Array.isArray(categories) || categories.length === 0) {
@@ -51,20 +53,26 @@ export default function SingleBook() {
 
 return (
     <div className='w-[90vw] mx-auto'>
-        {loading && <p>Loading books...</p>}
+        {loading &&   
+        <div className="flex justify-center my-8">
+            <BounceLoader size={50} color="#c6c930" />
+        </div>}
         {error && <p>{error}</p>}
         {!loading && !error && 
             <SingleBookItem data={book}/>
         }
         <hr className='p-4'/>
-
-        <ContainerSwiper title='Other books you may like...'>
-            {loading && <p>Loading books...</p>}
-            {error && <p>{error}</p>}
+        {loading && 
+        <div className="flex text-center items-center my-8 justify-center">
+            <BounceLoader size={50} color="#c6c930" />
+        </div>}
+        {error && <p>{error}</p>}
+        {!loading && 
+        <ContainerSwiper title='Other books you may like...'>    
             {!loading && !error && relatedBooks.map(book => (
             <BookCard key={book.book_id} data={book}/>
             ))}
-        </ContainerSwiper>
+        </ContainerSwiper>}
     </div>
 )
 }

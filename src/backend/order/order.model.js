@@ -4,14 +4,16 @@ const table = 'order';
 const primaryKey = 'order_id'
 
 export const getAll = async () => {
-    const sql = `SELECT * FROM ${table}`
+    const sql = `SELECT * FROM \`${table}\``;
     return await DB_Query.query(sql);
 }
 
 export const getById = async (id) => {
-    const sql = `SELECT * FROM ${table} WHERE ${primaryKey} = ?`
+    const sql = `
+    SELECT * FROM \`order\` 
+    INNER JOIN order_item ON \`order\`.order_id = order_item.fk_order_id 
+    WHERE \`order\`.fk_user_id = ?`;
     return await DB_Query.query(sql, [id])
-    .then(rows => rows[0])
 }
 
 export const create = async (fields) =>{
@@ -25,7 +27,7 @@ export const create = async (fields) =>{
     const columns = keys.join(', ');
     const placeholders = keys.map(() => '?').join(', ');
 
-    const sql = `INSERT INTO ${table} (${columns}) VALUES (${placeholders})`;
+    const sql = `INSERT INTO \`${table}\` (${columns}) VALUES (${placeholders})`;
 
     const result = await DB_Query.query(sql, values);
 
@@ -46,7 +48,7 @@ export const update = async(id, updatedFields) => {
         throw new Error('No fields provided to update');
     }
 
-    const sql = `UPDATE ${table} SET ${fields.join(', ')} WHERE ${primaryKey} = ?`;
+    const sql = `UPDATE \`${table}\` SET ${fields.join(', ')} WHERE ${primaryKey} = ?`;
     values.push(id);
 
     const result = await DB_Query.query(sql, values);
@@ -55,7 +57,7 @@ export const update = async(id, updatedFields) => {
 }
 
 export const deleteById = async(id) => {
-    const sql = `DELETE FROM ${table} WHERE ${primaryKey} = ?`;
+    const sql = `DELETE FROM \`${table}\` WHERE ${primaryKey} = ?`;
     const result = await DB_Query.query(sql, id);
 
     return result.affectedRows

@@ -20,41 +20,55 @@ export const getAll = async (req, res) => {
         const resTotalBooks = await Book.countBooks({searchTerm});
         const totalPages = Math.ceil(resTotalBooks/limit);
 
-        const nestedJson = _(record)
-            .groupBy('book_id')
-            .map((items) => {
-                const first = items[0];
-                return {
-                book_id: first.book_id,
-                title: first.title,
-                publication_date: first.publication_date,
-                categories: _.uniqBy(
-                    items.map(i => ({ category_name: i.category })),
-                    'category_name'
-                ),
-                publishers: _.uniqBy(
-                    items.map(i => ({ publisher_name: i.publisher_name })),
-                    'publisher_name'
-                ),
-                authors: _.uniqBy(
-                    items.map(i => ({ author: i.author })),
-                    'author'
-                ),
-                book_variant: _.uniqBy(
-                    items.map(i => ({
-                    variant_id: i.variant_id,
-                    variant: i.variant_name,
-                    price: i.price,
-                    images: _.uniqBy(
-                        items.map(it => ({
-                        image_path: it.image_path,
-                        alt_text: it.alt_text
-                        })), 'image_path')
-                    })), 'variant'
-                )
-                };
-            })
-            .value();
+    const nestedJson = _(record)
+    .groupBy('book_id')
+    .map((items) => {
+        const first = items[0];
+
+        // Group items by book_variant_id (not variant_id)
+        const variants = _(items)
+        .groupBy('book_variant_id')
+        .map((variantItems) => {
+            const v = variantItems[0];
+            return {
+            book_variant_id: v.book_variant_id,
+            variant_id: v.variant_id,
+            variant: v.variant_name,
+            price: v.price,
+            images: _.uniqBy(
+                variantItems
+                .filter(it => it.book_image_id) // filter out rows without image
+                .map(it => ({
+                    book_image_id: it.book_image_id,
+                    image_path: it.image_path,
+                    alt_text: it.alt_text,
+                })),
+                'book_image_id'
+            ),
+            };
+        })
+        .value();
+
+        return {
+        book_id: first.book_id,
+        title: first.title,
+        publication_date: first.publication_date,
+        categories: _.uniqBy(
+            items.map(i => ({ category_name: i.category })),
+            'category_name'
+        ),
+        publishers: _.uniqBy(
+            items.map(i => ({ publisher_name: i.publisher_name })),
+            'publisher_name'
+        ),
+        authors: _.uniqBy(
+            items.map(i => ({ author: i.author })),
+            'author'
+        ),
+        book_variant: variants,
+        };
+    })
+    .value();
 
         return res.status(200).json({
             data: nestedJson,
@@ -67,53 +81,63 @@ export const getAll = async (req, res) => {
     }
 };
 
-export const getById = async(req, res) => {
+export const getById = async (req, res) => {
     try {
         const record = await Book.getById(req.params.id);
-        const nestedJson = _(record)
-            .groupBy('book_id')
-            .map((items) => {
-                const first = items[0];
+
+        if (!record || record.length === 0) {
+            return res.status(404).json({ message: 'Book not found' });
+        }
+
+        const first = record[0];
+
+        const variants = _(record)
+            .groupBy('book_variant_id')
+            .map((variantItems) => {
+                const v = variantItems[0];
                 return {
-                book_id: first.book_id,
-                title: first.title,
-                publication_date: first.publication_date,
-                categories: _.uniqBy(
-                    items.map(i => ({ category_name: i.category })),
-                    'category_name'
-                ),
-                publishers: _.uniqBy(
-                    items.map(i => ({ publisher_name: i.publisher_name })),
-                    'publisher_name'
-                ),
-                authors: _.uniqBy(
-                    items.map(i => ({ author: i.author })),
-                    'author'
-                ),
-                book_variant: _.uniqBy(
-                    items.map(i => ({
-                    book_variant_id: i.book_variant_id,
-                    variant_id: i.variant_id,
-                    variant: i.variant_name,
-                    price: i.price,
+                    book_variant_id: v.book_variant_id,
+                    variant_id: v.variant_id,
+                    variant: v.variant_name,
+                    price: v.price,
                     images: _.uniqBy(
-                        items.map(it => ({
-                        image_path: it.image_path,
-                        alt_text: it.alt_text
-                        })), 'image_path')
-                    })), 'variant'
-                )
+                        variantItems
+                            .filter(i => i.image_path)
+                            .map(i => ({
+                                image_path: i.image_path,
+                                alt_text: i.alt_text
+                            })),
+                        'image_path'
+                    )
                 };
             })
             .value();
 
-        return res.status(200).json({
-            data: nestedJson
-        });
+        const result = {
+            book_id: first.book_id,
+            title: first.title,
+            publication_date: first.publication_date,
+            categories: _.uniqBy(
+                record.map(r => ({ category_name: r.category })),
+                'category_name'
+            ),
+            publishers: _.uniqBy(
+                record.map(r => ({ publisher_name: r.publisher_name })),
+                'publisher_name'
+            ),
+            authors: _.uniqBy(
+                record.map(r => ({ author: r.author })),
+                'author'
+            ),
+            book_variant: variants
+        };
+
+        return res.status(200).json({ data: result });
     } catch (error) {
+        console.error(error);
         res.status(500).json({ error: error.message });
     }
-}
+};
 
 export const getByBookVariantID = async(req, res) => {
     try {

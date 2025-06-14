@@ -6,6 +6,7 @@ import CategoryContainer from '../component/CategoryContainer.jsx';
 import ContainerSwiper from '../component/ContainerSwiper';
 import BookCard from '../component/BookCard.jsx';
 import * as BookApi from '../../api/book.api.js';
+import BounceLoader from "react-spinners/BounceLoader";
 
 import BannerImage1 from '../../assets/32458_Skinny_ForgeryOfFate.jpg'
 import BannerImage2 from '../../assets/e-book-banner.png'
@@ -60,41 +61,61 @@ export default function Home() {
             <BannerLoop />
         </div>
 
-        <ContainerSwiper title='Newly added'>
-            {loading && <p>Loading books...</p>}
-            {error && <p>{error}</p>}
+
+        {loading && 
+        <div className="flex text-center items-center my-8 justify-center h-40">
+            <BounceLoader size={50} color="#c6c930" />
+        </div>}
+        {error && <p>{error}</p>}
+        {!loading && 
+        <ContainerSwiper title='Newly added'>    
             {!loading && !error && newBooks.map(book => (
             <BookCard key={book.book_id} data={book}/>
             ))}
-        </ContainerSwiper>
+        </ContainerSwiper>}
 
         <Banner image={BannerImage1}/>
 
-        <ContainerSwiper title='Fantasy Books'>
-            {loading && <p>Loading books...</p>}
-            {error && <p>{error}</p>}
+
+        {loading && 
+        <div className="flex text-center items-center my-8 justify-center h-40">
+            <BounceLoader size={50} color="#c6c930" />
+        </div>}
+        {error && <p>{error}</p>}
+        {!loading && 
+        <ContainerSwiper title='Fantasy Books'>    
             {!loading && !error && fantasyBooks.map(book => (
             <BookCard key={book.book_id} data={book}/>
             ))}
-        </ContainerSwiper>
+        </ContainerSwiper>}
 
-        <Banner image={BannerImage2}/>
-
-        <ContainerSwiper title='Drama Books'>
-            {loading && <p>Loading books...</p>}
-            {error && <p>{error}</p>}
+        {loading && 
+        <div className="flex text-center items-center my-8 justify-center h-40">
+            <BounceLoader size={50} color="#c6c930" />
+        </div>}
+        {error && <p>{error}</p>}
+        {!loading && 
+        <ContainerSwiper title='Drama Books'>    
             {!loading && !error && dramaBooks.map(book => (
             <BookCard key={book.book_id} data={book}/>
             ))}
-        </ContainerSwiper>
+        </ContainerSwiper>}
 
-        <ContainerSwiper title='Romance Books'>
-            {loading && <p>Loading books...</p>}
-            {error && <p>{error}</p>}
+
+
+        <Banner image={BannerImage2}/>
+
+        {loading && 
+        <div className="flex text-center items-center my-8 justify-center h-40">
+            <BounceLoader size={50} color="#c6c930" />
+        </div>}
+        {error && <p>{error}</p>}
+        {!loading && 
+        <ContainerSwiper title='Romance Books'>    
             {!loading && !error && romanceBooks.map(book => (
             <BookCard key={book.book_id} data={book}/>
             ))}
-        </ContainerSwiper>
+        </ContainerSwiper>}
 
         <div className='w-[90vw] mx-auto py-2'>
             <CategoryContainer/>

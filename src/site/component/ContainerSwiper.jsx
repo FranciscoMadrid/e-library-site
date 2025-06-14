@@ -1,5 +1,6 @@
 import React, { useEffect, useRef, useState } from 'react';
 import { Swiper, SwiperSlide } from 'swiper/react';
+import linebreak from '../../assets/linebreak_fancy.png'
 
 import 'swiper/css';
 import 'swiper/css/navigation';
@@ -30,8 +31,8 @@ export default function ContainerSwiper({title = 'Default Title',children}) {
 
     return (
         <div className='flex flex-col gap-2 p-4 items-center justify-between'>
-            <h1 className='p-2 font-bold text-2xl'>{title}</h1>
-            <hr className='h-1 w-[75vw] text-secondary bg-secondary' />
+            <h1 className='p-2 font-bold text-2xl font-serif text-accent-secondary'>{title}</h1>
+            <img className=' max-w-[600px] w-[50vw]' src={linebreak} />
 
             <Swiper
                 key={swiperKey}
@@ -41,7 +42,6 @@ export default function ContainerSwiper({title = 'Default Title',children}) {
                 slidesPerView={1}
                 autoplay={{
                 delay: 3500,
-                disableOnInteraction: true,
                 }}
                 onSwiper={handleSwiper}
                 onSlideChange={handleSlideChange}

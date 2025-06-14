@@ -9,9 +9,11 @@ import { useDispatch, useSelector } from 'react-redux';
 import { logout } from '../../redux/authSlice';
 import { clearCart } from '../../redux/cartSlice';
 import CartContainer from './CartContainer';
+import linebreak from '../../assets/linebreak_fancy.png'
 
 export default function Navbar() {
     const { isAuthenticated, user } = useSelector(state => state.auth);
+    const { items } = useSelector(state => state.cart);
     
     const [mobileView, setMobileView] = useState(false);
     const [accountView, setaccountView] = useState(false);
@@ -32,6 +34,8 @@ export default function Navbar() {
         try {
             e.preventDefault();
             await axiosInstance.post('/auth/logout');
+            setaccountView(false);
+            setMobileView(false);
             dispatch(logout());
             dispatch(clearCart());
             navigate('/');
@@ -52,7 +56,9 @@ return (
                 </a>
             </div>
 
-            <Searchbar/>
+            <div className='hidden md:flex flex-grow px-8 max-w-[40vw]'>
+                <Searchbar />
+            </div>
 
             {/* Desktop View */}
             <div className='md:flex hidden flex-row gap-2 items-center font-light'>
@@ -63,7 +69,11 @@ return (
                     </Link>
 
                     {isAuthenticated ? (
-                        <div onClick={() => setToggleCart(!toggleCart)} className='flex cursor-pointer flex-row gap-1 justify-between items-center p-2 transition ease-in-out duration-200 rounded hover:text-accent-primary'>
+                        <div onClick={() => setToggleCart(!toggleCart)} className='flex relative cursor-pointer flex-row gap-1 justify-between items-center p-4 transition ease-in-out duration-200 rounded hover:text-accent-primary'>
+                            {items.length > 0 && 
+                            <div className='absolute top-1 right-10 h-5 w-5 bg-accent-primary rounded-full flex items-center justify-center'>
+                                <p className='text-[12px] text-white'>{items.length}</p>
+                            </div>}
                             <i className="fa-solid fa-cart-shopping fa-lg"></i>
                             <h1>Cart</h1>
                         </div>
@@ -121,51 +131,95 @@ return (
                         exit={{opacity: 0, y: -10}}
                         transition={{ duration: 0.3, ease: "easeInOut" }}
 
-                        className='absolute top-full left-0 w-full border-b-4 border-secondary text-white flex z-10 flex-col items-center text-accent-white text-xl font-semibold gap-4 py-4 bg-secondary/70 md:hidden'>
-                        
-                        <Link to={'/store'} className='flex flex-row gap-1 justify-between items-center p-2 transition ease-in-out duration-200 rounded hover:bg-white hover:text-accent-black'>
-                            <i className="fa-solid fa-store fa-lg"></i>
-                            <h1>Store</h1>
-                        </Link>
-
-                        <a href='#' className='flex flex-row gap-1 justify-between items-center p-2 transition ease-in-out duration-200 rounded hover:bg-white hover:text-accent-black'>
-                            <i className="fa fa-address-book fa-lg"></i>
-                            <h1>Contact</h1>
-                        </a>
-                        <Link to={'/login'} className='flex flex-row gap-1 justify-between items-center p-2 transition ease-in-out duration-200 rounded hover:bg-white hover:text-accent-black'>
-                            <i className="fa-solid fa-user fa-lg"></i>
-                            <h1>Login</h1>
-                        </Link>
-                    </motion.div>
-                )}
-            </AnimatePresence>
-            
-            {/* User Tab WIP */}
-            <AnimatePresence>
-                {accountView && (
-                    <motion.div
-                        initial={{opacity: 0, x: 100}}
-                        animate={{opacity: 1, x: 0}}
-                        exit={{opacity: 0, x: 100}}
-                        transition={{ duration: 0.3, ease: "easeInOut" }}
-                        className='fixed text-white top-25 right-0 w-[15vw] bg-accent-black border-l-4 border-t-4 border-b-4 border-accent-secondary z-50'>
-                            <div className='flex flex-col gap-2 p-4 items-center font-bold'>
-                                <a href='' className='flex flex-row gap-2 items-center justify-start hover:text-accent-primary'>
-                                    <h1>Cart</h1>
-                                </a>
-                                <hr className='w-full px-4 h-1 rounded-2xl'/>    
-                                <a href='' className='flex flex-row gap-2 items-center justify-start hover:text-accent-primary'>
-                                    <h1>Wishlist</h1>
-                                </a>
-                                <hr className='w-full px-4 h-1 rounded-2xl'/> 
-                                <a href='' onClick={handleLogout} className='flex flex-row gap-2 items-center justify-start hover:text-accent-primary'>
-                                    <h1>Log out</h1>
-                                </a>
+                        className='absolute top-full border-t-2 border-accent-secondary left-0 w-full border-b-4 text-white flex z-10 flex-col items-center text-accent-white text-xl font-semibold gap-4 py-4 bg-secondary md:hidden'>
+                            {!isAuthenticated ?          
+                            (<Link to={'/login'}  className='flex flex-row gap-1 justify-between items-center p-2 transition ease-in-out duration-200 rounded hover:text-accent-primary'>
+                                <i className="fa-solid fa-user fa-lg"></i>
+                                <h1>Login</h1>
+                            </Link>) :
+                            (
+                                <div className='flex flex-row gap-2 items-center font-bold'>
+                                    <h1>Welcome, {user?.first_name} {user?.last_name}</h1>
+                                    <img src={UserAvatar} 
+                                        className='h-10 w-10 rounded-4xl border-3 border-accent-secondary hover:border-accent-primary cursor-pointer transition duration-100 ease-in-out'></img>
+                                </div>
+                            )}
+                            <div className='w-full text-black px-8'>
+                                <Searchbar onSubmitCallback={() => setMobileView(false)} />
                             </div>
+                            <Link to={'/store'} onClick={() => toggleMobileView()} className='flex flex-row gap-1 justify-between items-center p-2 transition ease-in-out duration-200 rounded hover:bg-white hover:text-accent-black'>
+                                <i className="fa-solid fa-store fa-lg"></i>
+                                <h1>Store</h1>
+                            </Link>
+
+                            <Link to={'/order'} onClick={() => toggleMobileView()} className='flex flex-row gap-2 items-center justify-start hover:text-accent-primary'>
+                                <h1>Your Orders</h1>
+                            </Link>
+
+                            {isAuthenticated ? (
+                                <div onClick={() => {setToggleCart(!toggleCart); setaccountView(false); setMobileView(false);}} className='flex relative cursor-pointer flex-row gap-1 justify-between items-center p-4 transition ease-in-out duration-200 rounded hover:text-accent-primary'>
+                                    {items.length > 0 && 
+                                    <div className='absolute top-1 right-10 h-5 w-5 bg-accent-primary rounded-full flex items-center justify-center'>
+                                        <p className='text-[12px] text-white'>{items.length}</p>
+                                    </div>}
+                                    <i className="fa-solid fa-cart-shopping fa-lg"></i>
+                                    <h1>Cart</h1>
+                                </div>
+                            ) : (
+                                <Link to={'/login'}  className='flex cursor-pointer flex-row gap-1 justify-between items-center p-2 transition ease-in-out duration-200 rounded hover:text-accent-primary'>
+                                    <i className="fa-solid fa-cart-shopping fa-lg"></i>
+                                    <h1>Cart</h1>
+                                </Link>
+                            )}
+
+                            {isAuthenticated && (
+                                <div onClick={handleLogout} className='flex cursor-pointer flex-row gap-2 items-center justify-center transition ease-in-out duration-200 bg-accent-primary p-2 rounded-full w-40 hover:bg-accent-primary/40'>
+                                    <h1>Log out</h1>
+                                </div>
+                            )}
                     </motion.div>
                 )}
             </AnimatePresence>
         </div>
+        
+        {/* User Tab WIP */}
+        <AnimatePresence>
+            {accountView && (
+                <div className='absolute overflow-hidden top-0 left-0 z-250 h-full w-full bg-secondary/40 transition duration-300 ease-in-out'>
+                        <div className='grid grid-cols-[1fr_400px] h-full w-full'>
+                            <div onClick={() => setaccountView()}></div>
+
+                            <motion.div 
+                                initial={{opacity: 0, x: 100}}
+                                animate={{opacity: 1, x: 0}}
+                                exit={{opacity: 0, x: 100}}
+                                transition={{ duration: 0.2, ease: "easeInOut" }}
+                                className='flex flex-col items-center p-2 text-white gap-2 bg-accent-black border-l-4 border-accent-secondary'>
+                                
+                                <div className='flex flex-row gap-2 items-center font-semibold text-2xl'>
+                                    <h1>Welcome, {user?.first_name} {user?.last_name}</h1>
+                                    <img src={UserAvatar} 
+                                        className='h-15 w-15 rounded-4xl border-3 border-accent-secondary hover:border-accent-primary cursor-pointer transition duration-100 ease-in-out'></img>
+                                </div>
+
+                                <img className='px-4' src={linebreak} style={{
+                                    filter: 'invert(71%) sepia(43%) saturate(304%) hue-rotate(0deg) brightness(90%) contrast(83%)',
+                                }}/>
+
+                                <div className='flex flex-col gap-2 items-center w-[300px] text-xl'>
+                                    <Link to={'/order'} onClick={() => toggleAccountView()} className='flex flex-row gap-2 items-center justify-start hover:text-accent-primary'>
+                                        <h1>Your Orders</h1>
+                                    </Link>
+                                    <hr className='w-full h-1 rounded-2xl self-stretch'/> 
+                                    <div onClick={handleLogout} className='flex cursor-pointer flex-row gap-2 items-center justify-center transition ease-in-out duration-200 bg-accent-primary p-2 rounded-full w-40 hover:bg-accent-primary/40'>
+                                        <h1>Log out</h1>
+                                    </div>
+                                </div>
+                            </motion.div>
+                        </div>
+                </div>
+            )}
+        </AnimatePresence>
     </nav>
 )
 }

@@ -7,6 +7,10 @@
     --color-accent-secondary: #C2A878;
     --color-accent-black: #212121;
     --color-accent-aux: #3B4C5A;
+
+    --font-borel: 'Borel', cursive;
+    --font-aladin: 'Aladin', cursive;
+    --font-dmserif: 'DMSerifText', serif;
 }
 
 .banner-container {
@@ -36,5 +40,53 @@
   }
   100% {
     transform: translateX(-50%);
+  }
+}
+
+@font-face {
+  font-family: 'Borel';
+  src: url('./assets/fonts/Borel/Borel-Regular.ttf') format('truetype');
+  font-weight: 400;
+  font-style: normal;
+}
+
+@font-face {
+  font-family: 'Aladin';
+  src: url('./assets/fonts/Aladin/Aladin-Regular.ttf') format('truetype');
+  font-weight: 400;
+  font-style: normal;
+}
+
+@font-face {
+  font-family: 'DMSerifText';
+  src: url('./assets/fonts/DM_Serif_Text/DMSerifText-Regular.ttf') format('truetype');
+  font-weight: 400;
+  font-style: normal;
+}
+
+.font-borel {
+  font-family: var(--font-borel);
+}
+.font-aladin {
+  font-family: var(--font-aladin);
+}
+.font-dmserif {
+  font-family: var(--font-dmserif);
+}
+
+
+.spinner {
+  border: 4px solid rgba(0, 0, 0, 0.1);
+  border-left-color: #4f46e5; 
+  border-radius: 50%;
+  width: 40px;
+  height: 40px;
+  animation: spin 1s linear infinite;
+  margin: 20px auto;
+}
+
+@keyframes spin {
+  to {
+    transform: rotate(360deg);
   }
 }

@@ -57,7 +57,7 @@ return (
                 <h1 className='font-bold'>{data.quantity}</h1>
                 <i onClick={handleIncrease} className="fa-solid fa-plus w-8 text-blue-700 p-2 rounded-r-2xl hover:bg-blue-700 hover:text-white transition duration-200 ease-in-out cursor-pointer"></i>
             </div>
-            <div onClick={handleRemoveCartItem} className='rounded cursor-pointer bg-accent-primary p-2 text-white font-bold '>
+            <div onClick={handleRemoveCartItem} className='rounded cursor-pointer bg-accent-primary transition duration-200 ease-in-out hover:bg-accent-primary/80 p-2 text-white font-bold '>
                 Remove
             </div>
         </div>

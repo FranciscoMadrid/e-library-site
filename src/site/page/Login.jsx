@@ -34,7 +34,7 @@ export default function Login() {
         }
     }
 return (
-    <section className='h-[75vh] flex items-center justify-center bg-primary p-4'>
+    <section className='h-[75vh] flex items-center justify-center mx-auto p-4'>
         <div className='bg-white border-2 border-accent-secondary p-8 rounded shadow-md w-full max-w-lg flex flex-col gap-2 items-center'>
             <h1 className='font-bold text-2xl text-accent-secondary'>Log In</h1>
             <form onSubmit={handleSubmit}>

@@ -1,9 +1,10 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import VariantButton from './VariantButton';
 import { Swiper, SwiperSlide } from 'swiper/react';
 import { Navigation, Pagination, Mousewheel, Keyboard } from 'swiper/modules';
 import { useDispatch, useSelector } from 'react-redux';
 import * as CartItemApi from '../../api/cart_item.api.js' 
+import { AnimatePresence, easeInOut, motion, useAnimate, useAnimation, useInView } from 'framer-motion';
 
 import 'swiper/css';
 import 'swiper/css/navigation';
@@ -11,9 +12,17 @@ import 'swiper/css/pagination';
 import { addToCart } from '../../redux/cartSlice';
 
 export default function SingleBookItem({ data = {} }) {
+
+    const controlCartIcon = useAnimation();
+    const controlCartButton = useAnimation();
+    const controlCartText = useAnimation();
+
+    const [cartAnimationDone, setCartAnimationDone] = useState(false);
+
     const { book_variant = [], categories = [], publishers = [], authors = [], title } = data;
     const [currentVariant, setCurrentVariant] = useState('');
     const { user } = useSelector(state => state.auth);
+    const swiperRef = useRef(null);
 
     const dispatch = useDispatch();
 
@@ -25,11 +34,20 @@ export default function SingleBookItem({ data = {} }) {
 
     const handleVariantChange = (id) => {
         setCurrentVariant(id);
+        if (swiperRef.current) {
+            swiperRef.current.slideToLoop(0);
+        }
     };
 
     const handleAddToCart = async () => {
         if(!selectedVariant) return;
         try {
+            CartAnimation();
+            setCartAnimationDone(true);
+            CartThankYouMessage();
+            CartButtonAnimation();
+
+
             const res = await CartItemApi.createCartItem({fk_cart_id: user.cart_id, fk_book_variant_id: selectedVariant.book_variant_id, quantity: 1});
             dispatch(addToCart({
                 cart_item_id: res.id,
@@ -39,10 +57,49 @@ export default function SingleBookItem({ data = {} }) {
                 quantity: 1,
                 price: selectedVariant.price,
                 image_preview: selectedVariant.images[0]
-            }))
+            })) 
         } catch (error) {
-            
+            console.error('Add to cart failed:', error);
         }
+    }
+
+    const CartAnimation = () => {
+        controlCartIcon.start({
+            rotate: [0, 360, 330, 330, 330],
+            opacity: [1, 1, 1, 1, 0],
+            x: [0, 0, 0, 90, 90],
+            scale: [1.25, 1, 1, 1, 1],
+            transition: {
+                duration: 1.5,
+                ease: 'easeInOut',
+                times: [0, 0.4, 0.5, 0.7, 1],
+            }
+        });
+    };
+
+    const CartButtonAnimation = () => {
+        controlCartButton.start({
+            backgroundColor: ["#2563eb", "#1e40af", "#03ac57"], 
+            scale: [1, 0.5, 1.1, 1],
+            transition: {
+                duration: 0.4,
+                ease: 'easeInOut',
+                times: [0, 0.3, 0.6, 1]
+            },
+        });
+    };
+
+    const CartThankYouMessage = () => {
+        controlCartText.start({
+            x: [-100, 0, 0],
+            opacity: [0, .5, 1],
+            transition: {
+                delay: 0.7,
+                duration: 1,
+                ease: 'easeInOut',
+                times: [0, 0.5, 1],
+            },
+        });
     }
 
     const selectedVariant = book_variant.find(v => v.variant_id === currentVariant);
@@ -54,10 +111,11 @@ export default function SingleBookItem({ data = {} }) {
                 <div className='flex justify-center'>
                     <div className='w-full max-w-[500px] h-[400px] md:h-[500px] lg:h-[600px] bg-accent-black/20 rounded overflow-hidden shadow-2xl flex items-center justify-center'>
                         <Swiper
+                            onSwiper={(swiper) => (swiperRef.current = swiper)}
                             modules={[Navigation, Pagination, Mousewheel, Keyboard]}
                             spaceBetween={10}
                             slidesPerView={1}
-                            loop={true}
+                            
                             navigation
                             keyboard
                             pagination={{ clickable: true }}
@@ -121,10 +179,24 @@ export default function SingleBookItem({ data = {} }) {
                         </div>
                     ))}
                     </div>
-                    <div className='flex flex-row gap-2'>
-                        <div onClick={handleAddToCart} className='rounded cursor-pointer bg-blue-600 p-4 text-lg font-bold text-center text-white'>
-                            <i className="fa-solid fa-cart-shopping"></i>
-                        </div>
+                    <div className='flex flex-row gap-2 '>
+                        <AnimatePresence>
+                            <motion.div
+                                animate={controlCartButton}
+                                onClick={handleAddToCart}
+                                style={{ backgroundColor: '#2563eb' }}
+                                className="relative rounded flex items-center justify-center cursor-pointer text-white origin-center w-[280px] p-4 text-lg font-bold"
+                                >
+                                <motion.i animate={controlCartIcon} className="fa-solid fa-cart-shopping" />
+                                {/* Position Thank You absolutely */}
+                                <motion.div
+                                    animate={controlCartText}
+                                    initial={{opacity: 0}}
+                                    className="absolute inset-0 flex items-center justify-center pointer-events-none">
+                                    Thank You!
+                                </motion.div>
+                            </motion.div>
+                        </AnimatePresence>
                     </div>
                 </div>
             </div>

@@ -9,6 +9,7 @@ import * as PublisherApi from '../../api/publisher.api.js';
 import * as AuthorApi from '../../api/author.api.js';
 import { useLocation, useNavigate } from 'react-router-dom';
 import { animate, AnimatePresence, easeInOut, motion, scale, useInView } from 'framer-motion';
+import BounceLoader from "react-spinners/BounceLoader";
 
 export default function Store() {
     const [books, setBooks] = useState([]);
@@ -30,6 +31,7 @@ export default function Store() {
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState('');
     const location = useLocation();
+    
 
     const formatSelectOption = (data, valueKey, labelKey) => {
         return data.map(item => ({
@@ -94,6 +96,7 @@ export default function Store() {
         const fetchBooks = async () => {
             try {
                 setLoading(true);
+                setError('');
                 const bookData = await BookApi.getAll(30, currentPage, searchTerm, false);
                 setBooks(bookData.data);
                 setTotalPages(bookData.totalPages);
@@ -107,94 +110,139 @@ export default function Store() {
         };
         fetchBooks();
     }, [currentPage, searchTerm, hasMounted]);
-return (
-    <section className='w-full mx-auto relative'>
-        <div className='grid grid-cols-1 md:grid-cols-[15%_85%] xl:grid-cols-[10%_90%]'>
-            {/* Filter Container */}
-            <div className='hidden md:flex flex-col gap-2 items-center p-2 border-r-1 border-accent-black'>
-                {/* Categories */}
-                <h1 className=' font-bold text-accent-aux'>Categories</h1>
-                <hr className=' w-[80%]'/>
-                <div className='flex flex-col gap-2 items-start p-2 text-accent-aux font-semibold'>
-                    {categories.map((cat) => (
-                        <div key={cat.value} onClick={() => setSearchTerm(cat.label)} className='flex flex-row gap-2 items-center hover:underline cursor-pointer'>
-                            <h1>{cat.label}</h1>
-                        </div>
-                    ))}
-                </div>
-                {/* Variants */}
-                <h1 className=' font-bold text-accent-aux'>Variants</h1>
-                <hr className=' w-[80%]'/>
-                <div className='flex flex-col gap-2 items-start p-2 text-accent-aux font-semibold'>
-                    {variants.map((vat) => (
-                        <div key={vat.value} onClick={() => setSearchTerm(vat.label)} className='flex flex-row gap-2 items-center hover:underline cursor-pointer'>
-                            <h1>{vat.label}</h1>
-                        </div>
-                    ))}
-                </div>
 
-                {/* Publishers */}
-                <h1 className=' font-bold text-accent-aux'>Publishers</h1>
-                <hr className=' w-[80%]'/>
-                <div className='flex flex-col gap-2 items-start p-2 text-accent-aux font-semibold'>
-                    {publishers.map((pub) => (
-                        <div key={pub.value} onClick={() => setSearchTerm(pub.label)} className='flex flex-row gap-2 items-center hover:underline cursor-pointer'>
-                            <h1>{pub.label}</h1>
-                        </div>
-                    ))}
-                </div>
-            </div>
-
-            {/* Store Front Container */}
-            <div className='flex flex-col gap-1 px-6 py-2'>
+    return (
+        <section className='w-full mx-auto relative'>
+            <div className='grid grid-cols-1 md:grid-cols-[20%_80%] xl:grid-cols-[10%_90%]'>
                 {/* Filter Container */}
-                <div className='flex flex-row gap-2 justify-between items-center'>
-                    {searchTerm ? (           
-                    <div className='flex flex-row gap-2'>
-                        <h1 className='font-bold'>Searches for</h1>
-                        <p className='font-light'>"{searchTerm}"</p>
-                    </div>) : (<div></div>)}
-                    <div className='flex flex-row gap-2 items-center text-xl md:hidden' onClick={() => setIsMobileFilterVisible(!isMobileFilterVisible)}>
-                        <h1 className='font-bold'>Filters</h1>
-                            <motion.i 
-                                initial={{rotate: 0}}
-                                animate={{rotate: isMobileFilterVisible ? 180 : 0}}
-                                className="fa-solid fa-angle-up"/>
+                <div className='hidden md:flex flex-col gap-2 items-center p-2 border-r-1 border-accent-black'>
+                    {/* Categories */}
+                    <h1 className=' font-bold text-accent-aux'>Categories</h1>
+                    <hr className=' w-[80%]'/>
+                    <div className='flex flex-col gap-2 items-start p-2 text-accent-aux font-semibold'>
+                        {categories.map((cat) => (
+                            <div key={cat.value} onClick={() => setSearchTerm(cat.label)} className='flex flex-row gap-2 items-center hover:underline cursor-pointer'>
+                                <h1>{cat.label}</h1>
+                            </div>
+                        ))}
+                    </div>
+                    {/* Variants */}
+                    <h1 className=' font-bold text-accent-aux'>Variants</h1>
+                    <hr className=' w-[80%]'/>
+                    <div className='flex flex-col gap-2 items-start p-2 text-accent-aux font-semibold'>
+                        {variants.map((vat) => (
+                            <div key={vat.value} onClick={() => setSearchTerm(vat.label)} className='flex flex-row gap-2 items-center hover:underline cursor-pointer'>
+                                <h1>{vat.label}</h1>
+                            </div>
+                        ))}
+                    </div>
+
+                    {/* Publishers */}
+                    <h1 className=' font-bold text-accent-aux'>Publishers</h1>
+                    <hr className=' w-[80%]'/>
+                    <div className='flex flex-col gap-2 items-start p-2 text-accent-aux font-semibold'>
+                        {publishers.map((pub) => (
+                            <div key={pub.value} onClick={() => setSearchTerm(pub.label)} className='flex flex-row gap-2 items-center hover:underline cursor-pointer'>
+                                <h1>{pub.label}</h1>
+                            </div>
+                        ))}
                     </div>
                 </div>
 
-                {/* Books Container */}
-                <div className='grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-4 p-2 items-stretch'>
-                    {books.map(book => (
-                        <div key={book.book_id} className='shadow border-2 border-accent-secondary/50'>
-                            <BookCard data={book} showPrice={true} backgroundClr='bg-accent-black/8'/>
+                {/* Store Front Container */}
+                <div className='flex flex-col gap-1 px-6 py-2'>
+                    {/* Filter Container */}
+                    <div className='flex flex-row gap-2 justify-between items-center'>
+                        {searchTerm ? (           
+                        <div className='flex flex-row gap-2'>
+                            <h1 className='font-bold'>Searches for</h1>
+                            <p className='font-light'>"{searchTerm}"</p>
+                        </div>) : (<div></div>)}
+                        <div className='flex flex-row gap-2 items-center text-xl md:hidden' onClick={() => setIsMobileFilterVisible(!isMobileFilterVisible)}>
+                            <h1 className='font-bold'>Filters</h1>
+                                <motion.i 
+                                    initial={{rotate: 0}}
+                                    animate={{rotate: isMobileFilterVisible ? 180 : 0}}
+                                    className="fa-solid fa-angle-up"/>
                         </div>
-                    ))}
-                </div>
-            </div>
+                    </div>
 
-        </div>
-        <div className='flex flex-row gap-2 p-4 items-center justify-center'>
-            {Array.from({length: totalPages}, (_, i) => (
-                <PaginationButton key={i}
-                    pageNumber={i + 1}
-                    currentPage={currentPage}
-                    onClick={setCurrentPage}/>
-            ))}
-        </div>
-            {/* Mobile Filter View */}
-            {isMobileFilterVisible && (
+                    {/* Books Container */}
+                    <div className='min-h-[200px] grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-4 p-2 items-stretch'>
+                        {loading ? (
+                            <div className="col-span-full flex justify-center items-center h-64">
+                                <BounceLoader size={50} color="#c6c930" loading={true} />
+                            </div>
+                        ) : error ? (
+                            <div className="col-span-full text-center text-red-600 font-semibold">
+                                {error}
+                            </div>
+                        ) : books.length === 0 ? (
+                            <div className="col-span-full text-center text-gray-500">
+                                No books found.
+                            </div>
+                        ) : (
+                            books.map(book => (
+                                <div key={book.book_id} className='shadow border-2 border-accent-secondary/50'>
+                                    <BookCard data={book} showPrice={true} backgroundClr='bg-accent-black/8'/>
+                                </div>
+                            ))
+                        )}
+                    </div>
+                </div>
+
+            </div>
+            <div className='flex flex-row gap-2 p-4 items-center justify-center'>
+                {Array.from({length: totalPages}, (_, i) => (
+                    <PaginationButton key={i}
+                        pageNumber={i + 1}
+                        currentPage={currentPage}
+                        onClick={setCurrentPage}/>
+                ))}
+            </div>
+                {/* Mobile Filter View */}
+                {isMobileFilterVisible && (
             <motion.div
                 className='md:hidden absolute top-10 right-0 w-[50vw] z-20 border-4 rounded bg-white p-2 border-accent-secondary'
-                initial={{opacity: 0, y: -10}}
-                animate={{opacity: 1, y: 0}}
-                exit={{opacity: 0, y: -10}}
-                transition={{ duration: 0.3, ease: "easeInOut" }}>
-                <ItemTab data={categories} item_label='Categories' onClickSearchTerm={setSearchTerm}/>
-                <ItemTab data={variants} item_label='Variants' onClickSearchTerm={setSearchTerm}/>
-                <ItemTab data={publishers} item_label='Publishers' onClickSearchTerm={setSearchTerm}/>
+                initial="hidden"
+                animate="visible"
+                exit="hidden"
+                variants={{
+                    visible: {
+                        transition: {
+                            staggerChildren: 0.15
+                        }
+                    },
+                    hidden: {
+                        transition: {
+                            staggerChildren: 0.1,
+                            staggerDirection: -1
+                        }
+                    }
+                }}
+            >
+                {[categories, variants, publishers].map((dataSet, index) => (
+                    <motion.div
+                        key={index}
+                        custom={index}
+                        variants={{
+                            hidden: { opacity: 0, y: -10 },
+                            visible: (i) => ({
+                                opacity: 1,
+                                y: 0,
+                                transition: { delay: i * 0.1, ease: "easeInOut" }
+                            })
+                        }}
+                    >
+                        <ItemTab
+                            data={dataSet}
+                            item_label={['Categories', 'Variants', 'Publishers'][index]}
+                            onClickSearchTerm={setSearchTerm}
+                        />
+                    </motion.div>
+                ))}
             </motion.div>
-    )}
-    </section>
-)
+        )}
+        </section>
+    )
 }

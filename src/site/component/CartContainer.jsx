@@ -5,6 +5,9 @@ import CartItem from './CartItem';
 import * as CartApi from '../../api/cart.api.js';
 import * as BookVariantApi from '../../api/book_variant.api.js';  
 import { addToCart, clearCart, setCart } from '../../redux/cartSlice.js';
+import { useLocation } from 'react-router-dom';
+import linebreak from '../../assets/linebreak_fancy.png'
+import { Link, useNavigate } from 'react-router-dom';
 
 export default function CartContainer({toggleCart, setToggleCart}) {
     const cartItems = useSelector((state) => state.cart.items);
@@ -13,6 +16,7 @@ export default function CartContainer({toggleCart, setToggleCart}) {
     const [error, setError] = useState('');
 
     const dispatch = useDispatch();
+    const location = useLocation();
 
     const handleToggle = () => {
         setToggleCart(!toggleCart);
@@ -58,7 +62,7 @@ export default function CartContainer({toggleCart, setToggleCart}) {
         };
 
         fetchCart();
-    }, []);
+    }, [location.pathname]);
 
     const total = cartItems.reduce((sum, item) => {
         return sum + item.price * item.quantity;
@@ -75,15 +79,17 @@ return (
                     exit={{opacity: 0, x: 100}}
                     transition={{ duration: 0.2, ease: "easeInOut" }}
 
-                    className='bg-accent-black border-l-4 p-4 relative border-accent-secondary flex flex-col gap-4 items-center'>
+                    className='bg-accent-black border-l-4 p-8 relative border-accent-secondary flex flex-col gap-4 items-center'>
                         <h1 className=' text-2xl font-bold text-white'>Cart</h1>
-                        <hr className='text-white w-full'/>
+                        <img className='px-4' src={linebreak} style={{
+                            filter: 'invert(71%) sepia(43%) saturate(304%) hue-rotate(0deg) brightness(90%) contrast(83%)',
+                        }}/>
                         <div>
                             <i onClick={()=> handleToggle()} className="fa-solid fa-x text-2xl cursor-pointer text-white absolute top-5 right-5"></i>
                             {cartItems.length === 0 ? (
                                 <h1 className='text-center text-2xl font-bold text-white'>Look up some new books and get to shopping!</h1>
                             ) : (
-                                <div className='w-full bg-white p-6 rounded-2xl'>
+                                <div className='w-full bg-white p-10 rounded-2xl '>
                                     <div className="w-full">
                                         {cartItems.map((item, index) => (
                                             <CartItem data={item} key={index}/>
@@ -92,9 +98,9 @@ return (
                                     <div className='p-4'>
                                         <h1 className='text-lg font-bold'> Total: ${total.toFixed(2)}</h1>
                                     </div>
-                                    <div className='p-2 font-bold text-white text-center rounded-full transition duration-200 ease-in-out cursor-pointer bg-[#31af7c] hover:bg-[#87ceb1]'>
-                                        <h1>Proceed to Checkout</h1>
-                                    </div>
+                                    <Link to={'/checkout'} onClick={()=> handleToggle()} className="block w-full text-center p-3 mt-4 font-bold text-white rounded-full transition duration-200 ease-in-out bg-[#31af7c] hover:bg-[#87ceb1]">
+                                        Proceed to Checkout
+                                    </Link>
                                 </div>
                             )}
                         </div>

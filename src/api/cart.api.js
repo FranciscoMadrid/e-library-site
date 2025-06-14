@@ -25,7 +25,7 @@ export const getById = async (id) => {
 };
 
 // Create a new cart item
-export const createCartItem = async (data) => {
+export const createCart = async (data) => {
     try {
         const res = await axiosClient.post('/cart/', data);
         return res.data;
@@ -36,7 +36,7 @@ export const createCartItem = async (data) => {
 };
 
 // Update a cart item
-export const updateCartItem = async (id, updatedData) => {
+export const updateCart = async (id, updatedData) => {
     try {
         const res = await axiosClient.put(`/cart/${id}`, updatedData);
         return res.data;
@@ -47,7 +47,7 @@ export const updateCartItem = async (id, updatedData) => {
 };
 
 // Delete a cart item
-export const deleteCartItem = async (id) => {
+export const deleteCart = async (id) => {
     try {
         const res = await axiosClient.delete(`/cart/${id}`);
         return res.data;
