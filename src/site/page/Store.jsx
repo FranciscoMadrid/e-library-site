@@ -7,6 +7,7 @@ import * as CategoryApi from '../../api/category.api.js';
 import * as VariantApi from '../../api/variant.api.js';
 import * as PublisherApi from '../../api/publisher.api.js';
 import * as AuthorApi from '../../api/author.api.js';
+import FadeInWrapper from '../component/FadeInWrapper.jsx';
 import { useLocation, useNavigate } from 'react-router-dom';
 import { animate, AnimatePresence, easeInOut, motion, scale, useInView } from 'framer-motion';
 import BounceLoader from "react-spinners/BounceLoader";
@@ -183,9 +184,11 @@ export default function Store() {
                             </div>
                         ) : (
                             books.map(book => (
-                                <div key={book.book_id} className='shadow border-2 border-accent-secondary/50'>
+                            <FadeInWrapper key={book.book_id}>
+                                <div className='shadow border-2 border-accent-secondary/50'>
                                     <BookCard data={book} showPrice={true} backgroundClr='bg-accent-black/8'/>
                                 </div>
+                            </FadeInWrapper>
                             ))
                         )}
                     </div>

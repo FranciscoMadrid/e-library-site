@@ -1,8 +1,10 @@
 import express from 'express'
 import * as CartControl from './cart.controller.js'
+import { authenticateToken } from '../middleware/auth_user.middleware.js';
 
 const router = express.Router();
 
+router.use(authenticateToken)
 // Cart Item-----------------------------------------
 router.get('/item', CartControl.getAllCartItem);
 router.get('/item/:id', CartControl.getByIdCartItem);

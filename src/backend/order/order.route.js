@@ -1,7 +1,10 @@
 import express from 'express'
 import * as OrderControl from './order.controller.js'
+import { authenticateToken } from '../middleware/auth_user.middleware.js';
 
 const router = express.Router();
+
+router.use(authenticateToken);
 
 // Order History-----------------------------------------
 router.get('/history', OrderControl.getAllOrderHistory);

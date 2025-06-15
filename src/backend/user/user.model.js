@@ -29,8 +29,9 @@ export const create = async ({email, first_name, last_name, password}) =>{
         'INSERT INTO user (email, first_name, last_name, password_hash) VALUES (?, ?, ?, ?)',
         [email, first_name, last_name, hashedPassword]
     );
+    await DB_Query.query('INSERT INTO cart (fk_user_id) VALUES (?)', [result.insertId]);
 
-    return {message: 'User has been successfully created',details: `Email: ${email}`}
+    return {message: 'User has been successfully created'}
 }
 
 export const update = async(id, updatedFields) => {

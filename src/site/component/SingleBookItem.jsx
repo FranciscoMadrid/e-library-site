@@ -10,12 +10,14 @@ import 'swiper/css';
 import 'swiper/css/navigation';
 import 'swiper/css/pagination';
 import { addToCart } from '../../redux/cartSlice';
+import { useNavigate } from 'react-router-dom';
 
 export default function SingleBookItem({ data = {} }) {
 
     const controlCartIcon = useAnimation();
     const controlCartButton = useAnimation();
     const controlCartText = useAnimation();
+    const navigate = useNavigate();
 
     const [cartAnimationDone, setCartAnimationDone] = useState(false);
 
@@ -46,7 +48,6 @@ export default function SingleBookItem({ data = {} }) {
             setCartAnimationDone(true);
             CartThankYouMessage();
             CartButtonAnimation();
-
 
             const res = await CartItemApi.createCartItem({fk_cart_id: user.cart_id, fk_book_variant_id: selectedVariant.book_variant_id, quantity: 1});
             dispatch(addToCart({
@@ -183,7 +184,13 @@ export default function SingleBookItem({ data = {} }) {
                         <AnimatePresence>
                             <motion.div
                                 animate={controlCartButton}
-                                onClick={handleAddToCart}
+                                onClick={() => {
+                                    if(!user){
+                                        navigate('/login')
+                                    } else {
+                                        handleAddToCart();
+                                    }
+                                }}
                                 style={{ backgroundColor: '#2563eb' }}
                                 className="relative rounded flex items-center justify-center cursor-pointer text-white origin-center w-[280px] p-4 text-lg font-bold"
                                 >

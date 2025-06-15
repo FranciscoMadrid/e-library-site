@@ -4,11 +4,11 @@ import axiosClient from "./axiosInstance";
 export const getAll = async () => {
     try {
         const res = await axiosClient.get('/cart');
-        return res.data || [];  // Fallback to empty array if response is empty
+        return res.data || [];  
     } catch (error) {
         if (error.response?.status === 404) return []; // Not found
         console.error("Error fetching cart items:", error);
-        return [];  // Or throw error to be handled upstream
+        return [];  
     }
 };
 

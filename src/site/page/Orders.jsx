@@ -37,7 +37,6 @@ export default function Orders() {
         const fetchBookVariantsData = async () => {
             try {
                 setLoading(true);
-
                 const totalMap = [];
 
                 orders.map((order) => {
@@ -84,19 +83,22 @@ export default function Orders() {
                 setOrderItem(variantMap);
             } catch (error) {
                 setError(`Error in retriving books, ${error}`);
+                setLoading(false);
             } finally{
                 setLoading(false);
             }
         }
         if(orders.length > 0){
             fetchBookVariantsData();
+        } else {
+            setLoading(false);
         }
     }, [orders]);
 
 return (
-    <div className='w-full flex-grow py-10 text-accent-black relative bg-primary p-4'>
+    <div className='w-full flex-grow py-10 text-accent-black relative p-4 bg-primary/60'>
         {!loading ? (
-            orders.length < 0 ? (
+            orders.length > 0 ? (
                 <div className='max-w-7xl p-4 mx-auto rounded-lg flex flex-col gap-2'>
                 {orders
                 .slice()
@@ -112,7 +114,7 @@ return (
                 ))}
             </div>
             ) : (
-                <div className="flex max-w-7xl mx-auto justify-center flex-col items-center h-[600px] bg-white rounded-2xl shadow-xl text-gray-800 text-xl">
+                <div className="flex max-w-7xl mx-auto justify-center flex-col items-center h-[600px] bg-white rounded-2xl shadow-2xl text-gray-800 text-xl">
                     <h1 className='text-2xl font-bold'>No orders found</h1>
                     <p>You should check the store and grab yourself some new books!</p>
                 </div>

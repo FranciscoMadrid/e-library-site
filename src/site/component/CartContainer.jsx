@@ -61,7 +61,9 @@ export default function CartContainer({toggleCart, setToggleCart}) {
             }
         };
 
-        fetchCart();
+        if(cartItems.length > 0){
+            fetchCart();
+        }
     }, [location.pathname]);
 
     const total = cartItems.reduce((sum, item) => {

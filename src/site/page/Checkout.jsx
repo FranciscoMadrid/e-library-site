@@ -9,10 +9,13 @@ import * as CartApi from '../../api/cart.api.js';
 import * as CartItemApi from '../../api/cart_item.api.js';
 
 import { clearCart } from '../../redux/cartSlice';
+import { useNavigate } from 'react-router-dom';
 
 export default function Checkout() {
     const cartItems = useSelector((state) => state.cart.items);
     const { user } = useSelector(state => state.auth);
+
+    const navigate = useNavigate();
 
     const [total, setTotal] = useState(0);
     const [toggleModal, setToggleModal] = useState(false);
@@ -30,6 +33,11 @@ export default function Checkout() {
 
     const handleToggle = () => {
         setToggleModal(!toggleModal);
+    }
+
+    const handleCheckOut = () => {
+        setToggleModal(false);
+        navigate('/');
     }
 
     const setupPlaceOrderButton = () => {
@@ -100,7 +108,7 @@ export default function Checkout() {
             animate={controlModal}
             className="absolute inset-0 w-full h-full bg-accent-black/40 z-40 flex justify-center items-center"
             >
-            <Modal onClick={handleToggle} />
+            <Modal onClick={handleCheckOut} title='Order Completed'  description="We will get your package soon, check 'Your Orders' to check the status of your order."/>
             </motion.div>
             )}
             <div className="max-w-4xl mx-auto bg-white rounded-lg shadow-md p-8">

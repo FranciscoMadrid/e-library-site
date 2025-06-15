@@ -10,6 +10,10 @@ import SingleBook from './site/page/SingleBook';
 import Checkout from './site/page/Checkout';
 import Helper from './site/page/Helper';
 import Orders from './site/page/Orders';
+import NotFound from './site/page/NotFound';
+import ForgotPassword from './site/page/ForgotPassword';
+import Signup from './site/page/Signup';
+import ResetPassword from './site/page/ResetPassword';
 import Footer from './site/component/Footer';
 import Navbar from './site/component/Navbar';
 
@@ -38,6 +42,10 @@ function App() {
             <Route path='/store/:id' element={<SingleBook/>} />
             <Route path='/checkout' element={<Checkout/>} />
             <Route path='/order' element={<Orders/>} />
+            <Route path='/signup' element={<Signup/>} />
+            <Route path='/forgot-password' element={<ForgotPassword/>} />
+            <Route path='/reset-password' element={<ResetPassword />} />
+            <Route path="*" element={<NotFound />} />
           </Routes>
         </main>
         <Footer />

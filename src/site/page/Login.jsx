@@ -1,6 +1,6 @@
 import React, { useState } from 'react'
 import axiosInstance from '../../api/axiosInstance';
-import { useNavigate } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import { useDispatch } from 'react-redux';
 import { loginSuccess } from '../../redux/authSlice';
 
@@ -58,12 +58,12 @@ return (
             </form>
 
             <div className='flex flex-row gap-8 py-2 w-full items-center justify-between text-accent-aux'>
-                <a href='#' className='hover:underline'>
+                <Link to={'/forgot-password'} className='hover:underline'>
                     Forgot your password?
-                </a>
-                <a href='#' className='hover:underline'>
+                </Link>
+                <Link to={'/signup'} className='hover:underline'>
                     Create an Account
-                </a>
+                </Link>
             </div>
         </div>
     </section>

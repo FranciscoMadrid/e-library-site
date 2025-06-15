@@ -1,5 +1,5 @@
 import React, { useState } from 'react'
-import Logo from '../../assets/void_logo_white.png'
+import Logo from '../../assets/site_icon.svg'
 import UserAvatar from '../../assets/user_avatar.png'
 import Searchbar from './Searchbar';
 import axiosInstance from '../../api/axiosInstance';
