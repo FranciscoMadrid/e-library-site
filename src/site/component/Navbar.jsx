@@ -133,7 +133,7 @@ return (
 
                         className='absolute top-full border-t-2 border-accent-secondary left-0 w-full border-b-4 text-white flex z-10 flex-col items-center text-accent-white text-xl font-semibold gap-4 py-4 bg-secondary md:hidden'>
                             {!isAuthenticated ?          
-                            (<Link to={'/login'}  className='flex flex-row gap-1 justify-between items-center p-2 transition ease-in-out duration-200 rounded hover:text-accent-primary'>
+                            (<Link to={'/login'} onClick={() => toggleMobileView()}  className='flex flex-row gap-1 justify-between items-center p-2 transition ease-in-out duration-200 rounded hover:text-accent-primary'>
                                 <i className="fa-solid fa-user fa-lg"></i>
                                 <h1>Login</h1>
                             </Link>) :
@@ -166,7 +166,7 @@ return (
                                     <h1>Cart</h1>
                                 </div>
                             ) : (
-                                <Link to={'/login'}  className='flex cursor-pointer flex-row gap-1 justify-between items-center p-2 transition ease-in-out duration-200 rounded hover:text-accent-primary'>
+                                <Link to={'/login'} onClick={() => toggleMobileView()}  className='flex cursor-pointer flex-row gap-1 justify-between items-center p-2 transition ease-in-out duration-200 rounded hover:text-accent-primary'>
                                     <i className="fa-solid fa-cart-shopping fa-lg"></i>
                                     <h1>Cart</h1>
                                 </Link>

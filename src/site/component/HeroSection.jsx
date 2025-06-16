@@ -1,5 +1,6 @@
 import React from 'react'
 import HeroImage from '../../assets/hero_img.jpg'
+import { Link, useNavigate } from 'react-router-dom';
 
 export default function HeroSection({
     title = 'Default Title',
@@ -17,9 +18,9 @@ return (
 
                     <h1 className="font-bold text-3xl md:text-6xl font-borel py-4 text-accent-secondary">{title}</h1>
                     
-                    <button className="bg-accent-primary mt-6 text-sm text-white hover:bg-accent-primary/50 cursor-pointer transition ease-in-out duration-200  font-bold p-2 rounded-xl">
+                    <Link to={'/store'} className="bg-accent-primary mt-6 text-sm text-white hover:bg-accent-primary/50 cursor-pointer transition ease-in-out duration-200  font-bold p-2 rounded-xl">
                         {button_text}
-                    </button>
+                    </Link>
                 </div>
             </div>
 
