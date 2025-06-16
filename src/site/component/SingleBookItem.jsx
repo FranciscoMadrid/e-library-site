@@ -9,7 +9,7 @@ import { AnimatePresence, easeInOut, motion, useAnimate, useAnimation, useInView
 import 'swiper/css';
 import 'swiper/css/navigation';
 import 'swiper/css/pagination';
-import { addToCart } from '../../redux/cartSlice';
+import { addToCart, updateQuantity } from '../../redux/cartSlice';
 import { useNavigate } from 'react-router-dom';
 
 export default function SingleBookItem({ data = {} }) {
@@ -27,6 +27,7 @@ export default function SingleBookItem({ data = {} }) {
     const swiperRef = useRef(null);
 
     const dispatch = useDispatch();
+    const cartItems = useSelector(state => state.cart.items);
 
     useEffect(() => {
         if (book_variant.length > 0) {
@@ -41,15 +42,36 @@ export default function SingleBookItem({ data = {} }) {
         }
     };
 
-    const handleAddToCart = async () => {
-        if(!selectedVariant) return;
-        try {
-            CartAnimation();
-            setCartAnimationDone(true);
-            CartThankYouMessage();
-            CartButtonAnimation();
+const handleAddToCart = async () => {
+    if (!selectedVariant) return;
 
-            const res = await CartItemApi.createCartItem({fk_cart_id: user.cart_id, fk_book_variant_id: selectedVariant.book_variant_id, quantity: 1});
+    try {
+        CartAnimation();
+        setCartAnimationDone(true);
+        CartThankYouMessage();
+        CartButtonAnimation();
+
+        const existingItem = cartItems.find(
+            item => item.book_variant_id === selectedVariant.book_variant_id
+        );
+
+        if (existingItem) {
+            await CartItemApi.updateCartItem(existingItem.cart_item_id, {
+                quantity: existingItem.quantity + 1
+            });
+
+            dispatch(updateQuantity({
+                cart_item_id: existingItem.cart_item_id,
+                quantity: existingItem.quantity + 1
+            }));
+        } else {
+
+            const res = await CartItemApi.createCartItem({
+                fk_cart_id: user.cart_id,
+                fk_book_variant_id: selectedVariant.book_variant_id,
+                quantity: 1
+            });
+
             dispatch(addToCart({
                 cart_item_id: res.id,
                 book_variant_id: selectedVariant.book_variant_id,
@@ -58,11 +80,12 @@ export default function SingleBookItem({ data = {} }) {
                 quantity: 1,
                 price: selectedVariant.price,
                 image_preview: selectedVariant.images[0]
-            })) 
-        } catch (error) {
-            console.error('Add to cart failed:', error);
+            }));
         }
+    } catch (error) {
+        console.error('Add to cart failed:', error);
     }
+};
 
     const CartAnimation = () => {
         controlCartIcon.start({

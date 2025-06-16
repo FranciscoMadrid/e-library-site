@@ -158,3 +158,19 @@ export const deleteByIdCartItem = async(req, res) => {
         res.status(500).json({ error: `Failed to delete Record: ${error.message}` });
     }
 }
+
+export const getByCartAndVariant = async (req, res) => {
+    const { cart_id, book_variant_id } = req.params;
+
+    try {
+        const item = await CartItem.getByCartAndVariant(cart_id, book_variant_id);
+
+        if (!item) {
+            return res.status(404).json({ error: 'Item not found in cart' });
+        }
+
+        res.json(item);
+    } catch (error) {
+        res.status(500).json({ error: error.message });
+    }
+};
