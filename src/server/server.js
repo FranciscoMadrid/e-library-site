@@ -14,7 +14,7 @@ const app = express();
 
 const allowedOrigins = [
     'http://localhost:5173',
-    'http://82.180.163.74',
+    'https://e-library.ffmsdev.com',
     'http://e-library-api.ffmsdev.com'
 ];
 
