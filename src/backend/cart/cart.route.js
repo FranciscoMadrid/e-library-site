@@ -5,8 +5,6 @@ import { authenticateToken } from '../middleware/auth_user.middleware.js';
 const router = express.Router();
 
 router.use(authenticateToken)
-//Cart Item Book Variant-----------------------------
-router.get('/variant-item', CartControl.getByCartAndVariant);
 
 // Cart Item-----------------------------------------
 router.get('/item', CartControl.getAllCartItem);
