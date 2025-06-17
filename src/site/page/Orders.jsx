@@ -114,7 +114,7 @@ return (
                 ))}
             </div>
             ) : (
-                <div className="flex max-w-7xl mx-auto justify-center flex-col items-center h-[600px] bg-white rounded-2xl shadow-2xl text-gray-800 text-xl">
+                <div className="flex max-w-7xl mx-auto justify-center text-center flex-col items-center h-[600px] bg-white rounded-2xl shadow-2xl text-gray-800 text-xl">
                     <h1 className='text-2xl font-bold'>No orders found</h1>
                     <p>You should check the store and grab yourself some new books!</p>
                 </div>

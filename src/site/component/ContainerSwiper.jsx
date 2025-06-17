@@ -49,7 +49,7 @@ export default function ContainerSwiper({title = 'Default Title',children}) {
                 className='w-full'
                 breakpoints={{
                 360: {
-                    slidesPerView: 1,
+                    slidesPerView: 2,
                 },
                 640: {
                     slidesPerView: 2,

@@ -22,7 +22,7 @@ export default function BookCard({ data, showPrice = false, backgroundClr = '' }
         <div className="w-full max-w-xs mx-auto p-2 relative overflow-hidden"> 
             <Link to={{ pathname: `/store/${book_id}` }} className={`flex flex-col p-2 ${backgroundClr} rounded-2xl gap-2 items-center`}>
                 {images.length === 1 ? (
-                    <section className="w-full h-64 md:h-72">
+                    <section className="w-full h-40 md:h-72">
                         <img
                             src={images[0].image_path}
                             alt={images[0].alt_text}
@@ -37,7 +37,7 @@ export default function BookCard({ data, showPrice = false, backgroundClr = '' }
                         loop={true}
                         navigation
                         keyboard
-                        className="w-full h-64 md:h-72"
+                        className="w-full h-40 md:h-72"
                     >
                         {images.map((img, index) => (
                             <SwiperSlide

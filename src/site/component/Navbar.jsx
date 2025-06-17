@@ -152,9 +152,11 @@ return (
                                 <h1>Store</h1>
                             </Link>
 
-                            <Link to={'/order'} onClick={() => toggleMobileView()} className='flex flex-row gap-2 items-center justify-start hover:text-accent-primary'>
-                                <h1>Your Orders</h1>
-                            </Link>
+                            {isAuthenticated && (
+                                <Link to={'/order'} onClick={() => toggleMobileView()} className='flex flex-row gap-2 items-center justify-start hover:text-accent-primary'>
+                                    <h1>Your Orders</h1>
+                                </Link>
+                            )}
 
                             {isAuthenticated ? (
                                 <div onClick={() => {setToggleCart(!toggleCart); setaccountView(false); setMobileView(false);}} className='flex relative cursor-pointer flex-row gap-1 justify-between items-center p-4 transition ease-in-out duration-200 rounded hover:text-accent-primary'>

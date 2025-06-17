@@ -169,7 +169,7 @@ export default function Store() {
                     </div>
 
                     {/* Books Container */}
-                    <div className='min-h-[200px] grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-4 p-2 items-stretch'>
+                    <div className='min-h-[200px] grid grid-cols-2 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-4 p-2 items-stretch'>
                         {loading ? (
                             <div className="col-span-full flex justify-center items-center h-64">
                                 <BounceLoader size={50} color="#c6c930" loading={true} />

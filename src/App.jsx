@@ -3,6 +3,8 @@ import { BrowserRouter, Routes, Route } from 'react-router-dom';
 import { useDispatch } from 'react-redux';
 import { loginSuccess } from './redux/authSlice'; // adjust path if needed
 
+import ScrollToTop from './site/component/ScrollToTop';
+
 import Home from './site/page/Home';
 import Login from './site/page/Login';
 import Store from './site/page/Store';
@@ -31,6 +33,7 @@ function App() {
 
   return (
     <BrowserRouter>
+      <ScrollToTop />
       <div className='flex flex-col min-h-screen relative font-dmserif'>
         <Navbar />
         <main className='flex-grow flex'>
