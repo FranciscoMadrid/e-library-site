@@ -61,7 +61,7 @@ return (
             </div>
 
             {/* Desktop View */}
-            <div className='md:flex hidden flex-row gap-2 items-center font-light'>
+            <div className='md:flex hidden flex-row gap-2 items-center font-light text-lg'>
                 <div className='flex flex-row gap-4 justify-between items-center text-accent-secondary font-light'>
                     <Link to={'/store'} className='flex flex-row gap-1 justify-between items-center p-2 transition ease-in-out duration-200 rounded hover:text-accent-primary'>
                         <i className="fa-solid fa-store fa-lg"></i>

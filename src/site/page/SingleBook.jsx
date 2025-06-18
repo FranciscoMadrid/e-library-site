@@ -68,7 +68,7 @@ return (
         </div>}
         {error && <p>{error}</p>}
         {!loading && 
-        <ContainerSwiper title='Other books you may like...'>    
+        <ContainerSwiper title='Other books you may like'>    
             {!loading && !error && relatedBooks.map(book => (
             <BookCard key={book.book_id} data={book}/>
             ))}

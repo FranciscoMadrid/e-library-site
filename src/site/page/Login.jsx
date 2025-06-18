@@ -13,26 +13,36 @@ export default function Login() {
     const handleSubmit = async (e) => {
         e.preventDefault();
 
+        if (!email.trim() || !password.trim()) {
+            alert('Please enter both email and password.');
+            return;
+        }
+
+        const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+        if (!emailRegex.test(email)) {
+            alert('Please enter a valid email address.');
+            return;
+        }
+
         try {
             const res = await axiosInstance.post('auth/login', {
                 email,
                 password
-            })
+            });
 
             const { accessToken, user } = res.data;
 
             dispatch(loginSuccess({ accessToken, user }));
-
             localStorage.setItem('accessToken', accessToken);
             localStorage.setItem('user', JSON.stringify(user));
 
             console.log('Login successful:');
-            navigate('/')
+            navigate('/');
         } catch (error) {
             console.error('Login error:', error.response?.data || error.message);
             alert(error.response?.data?.message || `Login failed. ${error}`);
         }
-    }
+    };
 return (
     <section className='h-[75vh] flex items-center justify-center mx-auto p-4'>
         <div className='bg-white border-2 border-accent-secondary p-8 rounded shadow-md w-full max-w-lg flex flex-col gap-2 items-center'>

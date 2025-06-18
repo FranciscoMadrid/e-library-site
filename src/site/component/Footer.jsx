@@ -7,23 +7,23 @@ return (
             
             <div className='flex flex-col gap-2 items-start text-white text-lg'>
                 <h1 className='font-bold text-lg text-accent-secondary'>Support / Policies</h1>
-                <p className=' cursor-pointer'>Terms of Services</p>
-                <p className=' cursor-pointer'>Privacy Policy</p>
+                <p className=' cursor-pointer hover:underline'>Terms of Services</p>
+                <p className=' cursor-pointer hover:underline'>Privacy Policy</p>
             </div>
 
             <div className='flex flex-col gap-2 items-start text-white text-lg'>
                 <h1 className='font-bold text-lg text-accent-secondary'>Socials</h1>
-                <a href='#' className='flex flex-row gap-2 items-center justify-between'>
+                <a href='#' className='flex flex-row gap-2 items-center justify-between hover:underline'>
                     <i className="fa-brands fa-youtube"></i>
                     <h1>Youtube</h1>
                 </a>
 
-                <a href='#' className='flex flex-row gap-2 items-center justify-between'>
+                <a href='#' className='flex flex-row gap-2 items-center justify-between hover:underline'>
                     <i className="fa-brands fa-x-twitter"></i>
                     <h1>Twitter</h1>
                 </a>
 
-                <a href='#' className='flex flex-row gap-2 items-center justify-between'>
+                <a href='#' className='flex flex-row gap-2 items-center justify-between hover:underline'>
                     <i className="fa-brands fa-instagram"></i>
                     <h1>Instagram</h1>
                 </a>

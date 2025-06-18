@@ -56,8 +56,8 @@ export default function BookCard({ data, showPrice = false, backgroundClr = '' }
             </Link>
             <div className='flex flex-col gap-2 py-2 border-b-2'>
                 <div className='flex flex-col gap-2'>
-                    <h1 className="font-bold truncate w-full text-accent-secondary text-shadow">{title}</h1>
-                    <h1 className="font-light">{authors.map((auth) => auth.author).join(', ')}</h1>
+                    <h1 className="font-bold truncate w-full text-lg text-accent-black">{title}</h1>
+                    <h1 className="font-light text-sm md:text-lg">{authors.map((auth) => auth.author).join(', ')}</h1>
                 </div>
                 {showPrice && firstVariant ? (
                     <h1 className='font-light'>

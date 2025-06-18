@@ -34,19 +34,54 @@ export default function Signup() {
         navigate('/');
     }
 
-    const handleSubmit = async(e) => {
+    const handleSubmit = async (e) => {
         e.preventDefault();
+
+        const trimmedEmail = email.trim();
+        const trimmedPassword = password.trim();
+        const trimmedPasswordConfirm = passwordConfirm.trim();
+        const trimmedFirstName = firstName.trim();
+        const trimmedLastName = lastName.trim();
+
+        if (
+            !trimmedEmail ||
+            !trimmedPassword ||
+            !trimmedPasswordConfirm ||
+            !trimmedFirstName ||
+            !trimmedLastName
+        ) {
+            alert('Please fill in all the fields.');
+            return;
+        }
+
+        const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+        if (!emailRegex.test(trimmedEmail)) {
+            alert('Please enter a valid email address.');
+            return;
+        }
+
+        if (trimmedPassword !== trimmedPasswordConfirm) {
+            alert('Passwords do not match.');
+            return;
+        }
+
         try {
             setToggleModal(true);
-            const res = await UserApi.createUser({email: email, first_name: firstName, last_name: lastName, password: password})
-            if(res){
-                console.log('User has been created successfully')
+            const res = await UserApi.createUser({
+                email: trimmedEmail,
+                first_name: trimmedFirstName,
+                last_name: trimmedLastName,
+                password: trimmedPassword,
+            });
+
+            if (res) {
+                console.log('User has been created successfully');
             }
         } catch (error) {
-            console.log(`Error when creating a new user: ${error}`)
+            console.log(`Error when creating a new user: ${error}`);
+            alert('Failed to create user. Please try again.');
         }
-    }
-
+    };
     useEffect(() => {
         if(toggleModal){
                 setupModal();

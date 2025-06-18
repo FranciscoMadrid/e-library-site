@@ -10,7 +10,7 @@ import * as BookApi from '../../api/book.api.js';
 import BounceLoader from "react-spinners/BounceLoader";
 
 import BannerImage1 from '../../assets/32458_Skinny_ForgeryOfFate.jpg';
-import BannerImage2 from '../../assets/e-book-banner.png';
+import BannerImage2 from '../../assets/Banner-E-Book.png';
 
 export default function Home() {
     const [newBooks, setNewBooks] = useState([]);
@@ -83,7 +83,7 @@ export default function Home() {
             )}
 
             <FadeInWrapper delay={0.2}>
-            <Banner image={BannerImage1} />
+            <Banner image={BannerImage1} alt='A beauty and the Beast Retelling featuring Chinese folklore.' />
             </FadeInWrapper>
 
             {!loading && (
@@ -107,7 +107,7 @@ export default function Home() {
             )}
 
             <FadeInWrapper delay={0.5}>
-            <Banner image={BannerImage2} />
+                <Banner image={BannerImage2} title='Coming Soon' subtitle='Our collection in E-Book format'/>
             </FadeInWrapper>
 
             {!loading && (
